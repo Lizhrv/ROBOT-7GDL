@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Control de Rutina del Robot</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #00b4d8, #03045e);
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.7);
+        }
+
+        h2 {
+            font-size: 1.7rem;
+            margin-top: -10px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 30px;
+            width: 80%;
+            margin: auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+            backdrop-filter: blur(6px);
+        }
+
+        button {
+            font-size: 1.6rem;
+            padding: 18px 50px;
+            margin: 15px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-start {
+            background: #90e0ef;
+            color: #03045e;
+        }
+
+        .btn-start:hover {
+            background: #caf0f8;
+            transform: scale(1.1);
+        }
+
+        .btn-stop {
+            background: #ff4d6d;
+            color: white;
+        }
+
+        .btn-stop:hover {
+            background: #ff758f;
+            transform: scale(1.1);
+        }
+
+        .btn-reset {
+            background: #fdf0d5; /* Color crema */
+            color: #03045e;
+        }
+
+        .btn-reset:hover {
+            background: #fcbf49;
+            transform: scale(1.1);
+        }
+
+        .status {
+            font-size: 1.6rem;
+            margin-top: 25px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🤖 CONTROL DEL ROBOT</h1>
+    <h2>Inicia, detiene o restablece la rutina</h2>
+
+    <div class="card">
+        <button class="btn-start" onclick="startRoutine()">▶ Iniciar Rutina</button>
+        <button class="btn-stop" onclick="stopRoutine()">⛔ Detener</button>
+        <button class="btn-reset" onclick="resetRoutine()">🔄 Restablecer</button>
+
+        <p class="status" id="statusText">Estado del robot: Inactivo</p>
+    </div>
+
+    <script>
+        // ¡¡IMPORTANTE!! 
+        // Reemplaza esta IP con la dirección IP que te da el Monitor Serial del Arduino.
+        const ARDUINO_IP = '172.20.10.2'; 
+
+        // Función auxiliar para actualizar el estado
+        function updateStatus(text, success) {
+            document.getElementById('statusText').innerText = 'Estado del robot: ' + text;
+        }
+
+        function startRoutine() {
+            updateStatus('Enviando comando START...', true);
+            fetch('http://' + ARDUINO_IP + '/start')
+                .then(response => {
+                    if (response.ok) {
+                        updateStatus('Ejecutando rutina...', true);
+                    } else {
+                        updateStatus('Error al activar la rutina. Codigo: ' + response.status, false);
+                    }
+                })
+                .catch(() => alert('Error de conexión. Verifica la IP y la red.'));
+        }
+
+        function stopRoutine() {
+            updateStatus('Enviando comando STOP...', true);
+            fetch('http://' + ARDUINO_IP + '/stop')
+                .then(response => {
+                    if (response.ok) {
+                        updateStatus('Detenido y en reposo.', true);
+                    } else {
+                        updateStatus('Error al detener. Codigo: ' + response.status, false);
+                    }
+                })
+                .catch(() => alert('Error de conexión. Verifica la IP y la red.'));
+        }
+
+        function resetRoutine() {
+            updateStatus('Enviando comando RESET...', true);
+            fetch('http://' + ARDUINO_IP + '/reset')
+                .then(response => {
+                    if (response.ok) {
+                        updateStatus('Restablecido. Listo para empezar.', true);
+                    } else {
+                        updateStatus('Error al restablecer. Codigo: ' + response.status, false);
+                    }
+                })
+                .catch(() => alert('Error de conexión. Verifica la IP y la red.'));
+        }
+    </script>
+
+</body>
+</html>
