@@ -1,101 +1,201 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<title>Control de Yarbito</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-  body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
-  h1 { color: #333; }
-  .controls { margin: 20px 0; }
-  button {
-    padding: 15px 30px;
-    margin: 10px;
-    font-size: 18px;
-    cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    transition: background-color 0.3s;
-  }
-  #btnStart { background-color: #4CAF50; color: white; }
-  #btnStart:hover { background-color: #45a049; }
-  #btnRutina2 { background-color: #008CBA; color: white; }
-  #btnRutina2:hover { background-color: #007bb5; }
-  #btnReset { background-color: #f44336; color: white; }
-  #btnReset:hover { background-color: #da190b; }
-  #statusText {
-    margin-top: 20px;
-    font-size: 20px;
-    font-weight: bold;
-    color: #555;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Yarbito - Concurso Robótica</title>
+    <style>
+        /* ESTILOS GENERALES Y FUENTE */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); /* Fondo azul oscuro degradado */
+            color: #ecf0f1; /* Texto blanco brillante */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        /* CONTENEDOR PRINCIPAL Y CENTRADO */
+        .container {
+            background-color: #34495e; /* Fondo gris oscuro */
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        /* TÍTULO */
+        h1 { 
+            color: #f1c40f; /* Amarillo llamativo */
+            font-size: 2.5em;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* SUBTÍTULO */
+        h2 {
+            color: #bdc3c7;
+            font-size: 1.2em;
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+
+        /* ESTADO DEL ROBOT */
+        #statusText {
+            margin-top: 25px;
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #2c3e50; /* Fondo más oscuro para estado */
+            transition: all 0.5s ease;
+        }
+
+        /* CONTROL DE BOTONES (CENTRADO) */
+        .controls {
+            display: flex;
+            flex-direction: column; /* Apilado vertical */
+            align-items: center; /* Centrado horizontal */
+            gap: 20px; /* Espacio entre botones */
+            margin-top: 30px;
+        }
+        
+        /* ESTILO BASE DE BOTONES */
+        button {
+            padding: 15px 35px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 30px; /* Bordes redondeados */
+            transition: all 0.3s ease;
+            width: 100%; /* Ocupa todo el ancho del contenedor controls */
+            max-width: 350px;
+            text-transform: uppercase;
+        }
+        
+        /* COLORES ESPECÍFICOS PARA CADA FUNCIÓN */
+        #btnStart { 
+            background-color: #2ecc71; /* Verde esmeralda */
+            color: white; 
+            box-shadow: 0 5px 0 #27ae60;
+        }
+        #btnStart:active {
+            box-shadow: 0 2px 0 #27ae60;
+            transform: translateY(3px);
+        }
+
+        #btnRutina2 { 
+            background-color: #3498db; /* Azul */
+            color: white; 
+            box-shadow: 0 5px 0 #2980b9;
+        }
+        #btnRutina2:active {
+            box-shadow: 0 2px 0 #2980b9;
+            transform: translateY(3px);
+        }
+
+        #btnReset { 
+            background-color: #e74c3c; /* Rojo ladrillo */
+            color: white; 
+            box-shadow: 0 5px 0 #c0392b;
+        }
+        #btnReset:active {
+            box-shadow: 0 2px 0 #c0392b;
+            transform: translateY(3px);
+        }
+        
+    </style>
 </head>
 <body>
 
-<h1>🤖 Control de Yarbito</h1>
+<div class="container">
+    <h1>🦾 YARBITO - Control Remoto</h1>
+    <h2>¡Listo para el Concurso de Robótica!</h2>
 
-<div class="controls">
-  <button id="btnStart" onclick="startRoutine()">🚀 INICIAR RUTINA 1</button>
-  
-  <button id="btnRutina2" onclick="startRoutine2()">🔄 INICIAR RUTINA 2</button>
+    <div class="controls">
+        <button id="btnStart" onclick="startRoutine()">🔴 INICIAR RUTINA 1 (Recogida)</button>
+        
+        <button id="btnRutina2" onclick="startRoutine2()">🔵 INICIAR RUTINA 2 (Alterna)</button>
 
-  <button id="btnReset" onclick="resetRoutine()">🚨 RESET / REPOSO</button>
-  
+        <button id="btnReset" onclick="resetRoutine()">⚫ RESET / REPOSO FORZADO</button>
+    </div>
+
+    <p id="statusText">Estado de Yarbito: Conectando...</p>
 </div>
 
-<p id="statusText">Estado del robot: Listo para iniciar.</p>
-
 <script>
-    // Reemplaza esta IP con la dirección IP que te da el Monitor Serial del Arduino.
+    // ****************************************************
+    // ** CONFIGURACIÓN JS **
+    // ****************************************************
+    
+    // REEMPLAZA ESTA IP CON LA DIRECCIÓN IP ACTUAL DE TU ARDUINO R4
     const ARDUINO_IP = '172.20.10.2'; 
 
     // Función auxiliar para actualizar el texto de estado en la página
     function updateStatus(text, success) {
         const statusElement = document.getElementById('statusText');
         statusElement.innerText = 'Estado de Yarbito: ' + text;
-        statusElement.style.color = success ? '#333' : '#f44336';
+        
+        // Cambia el color del fondo de la caja de estado según el resultado
+        statusElement.style.backgroundColor = success ? '#2c3e50' : '#8c2f2f'; // Gris oscuro para éxito, rojo oscuro para error
+        statusElement.style.color = success ? '#ecf0f1' : '#f8d7da'; // Texto blanco para éxito, rosado para error
     }
 
-    // Función genérica para enviar comandos al Arduino
-    // La parte del error de conexión (catch) ha sido modificada para NO usar alert.
+    // Función genérica para enviar comandos (Sin alerts de error)
     function sendCommand(command, successMessage, failureMessage) {
         updateStatus('Enviando comando ' + command + '...', true);
         
-        // Construye la URL completa
         const url = 'http://' + ARDUINO_IP + command;
 
         fetch(url) 
             .then(response => {
                 if (response.ok) {
-                    // Comando exitoso (código 200)
                     updateStatus(successMessage, true);
                 } else {
-                    // El Arduino respondió, pero con un error (ej. código 404)
-                    updateStatus(failureMessage + ' (Código: ' + response.status + ')', false);
+                    // El Arduino respondió, pero con un código de error HTTP
+                    updateStatus(failureMessage + ' (Cód. HTTP: ' + response.status + ')', false);
                 }
             })
             .catch(error => {
-                // Fallo total de conexión (IP incorrecta o Arduino desconectado)
-                // Se elimina la ventana emergente (alert)
-                updateStatus('ERROR: No se pudo conectar a la IP. Verifique la red.', false);
-                console.error('Error de conexión:', error); // Muestra el error en la consola del navegador
+                // Fallo total de conexión (IP incorrecta o Arduino desconectado/en rutina)
+                // Se elimina la ventana emergente (alert) y se muestra el error en el estado.
+                updateStatus('ERROR: No se pudo conectar. Verifique la IP (' + ARDUINO_IP + ') y la red.', false);
+                console.error('Error de conexión:', error); 
             });
     }
 
-    // Rutina 1: El comando original de iniciar la rutina de Recoger/Soltar
+    // ****************************************************
+    // ** COMANDOS DE RUTINA **
+    // ****************************************************
+    
+    // Rutina 1: Recoger/Soltar (Comando /start)
     function startRoutine() {
-        sendCommand('/start', 'Rutina 1 (Recoger/Soltar) activada.', 'Error al activar Rutina 1.');
+        sendCommand('/start', 'Rutina 1 (Recogida) activada.', 'Fallo al iniciar Rutina 1.');
     }
 
-    // Rutina 2: Nuevo comando para la segunda rutina que debes agregar al Arduino
+    // Rutina 2: (Nuevo comando /rutina2)
     function startRoutine2() {
-        sendCommand('/rutina2', 'Rutina 2 (Movimiento Alterno) activada.', 'Error al activar Rutina 2.');
+        // Recuerda añadir la lógica para /rutina2 en tu código Arduino!
+        sendCommand('/rutina2', 'Rutina 2 (Alterna) activada.', 'Fallo al iniciar Rutina 2.');
     }
 
     // Comando RESET: Pone al robot en la posición de reposo
     function resetRoutine() {
-        sendCommand('/reset', 'Yarbito restablecido y en reposo.', 'Error al ejecutar RESET.');
+        sendCommand('/reset', 'Yarbito restablecido y en reposo.', 'Fallo al ejecutar RESET.');
     }
+
+    // Inicializa el estado al cargar la página
+    window.onload = function() {
+        updateStatus('Listo para operación.', true);
+    };
 </script>
 
 </body>
