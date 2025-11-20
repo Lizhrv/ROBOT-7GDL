@@ -137,7 +137,7 @@
     // ****************************************************
     
     // REEMPLAZA ESTA IP CON LA DIRECCIÓN IP ACTUAL DE TU ARDUINO R4
-    const ARDUINO_IP = '172.20.10.2'; 
+    const ARDUINO_IP = '172.16.1.112172.20.10.2172.16.1.106'; 
 
     // Función auxiliar para actualizar el texto de estado en la página
     function updateStatus(text, success) {
@@ -153,7 +153,7 @@
     function sendCommand(command, successMessage, failureMessage) {
         updateStatus('Enviando comando ' + command + '...', true);
         
-        const url = 'http://' + ARDUINO_IP + command;
+        const url = 'http://' + ARDUINO_IP + cgit ommand;
 
         fetch(url) 
             .then(response => {

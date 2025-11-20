@@ -2,8 +2,8 @@
 #include <Servo.h> 
 
 // === 1. CONFIGURACIÓN DE RED WIFI ===
-char ssid[] = "iPhone Liz";     
-char pass[] = "lizlizliz";       
+char ssid[] = "COMPUTACION E4";     
+char pass[] = "C0MPUT4C10N%16";       
 int status = WL_IDLE_STATUS;        
 WiFiServer server(80);
 volatile bool rutinaActiva = false; 
@@ -177,8 +177,8 @@ void setup() {
         delay(10000); 
     }
 
-    Serial.println("iPhone Liz");
-    Serial.print("172.16.1.112172.20.10.2");
+    Serial.println("COMPUTACION E4");
+    Serial.print("172.16.1.112172.20.10.2172.16.1.106");
     Serial.println(WiFi.localIP()); 
     server.begin();
 }

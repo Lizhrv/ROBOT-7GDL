@@ -6,8 +6,8 @@
 // ****************************************************
 
 // --- RED WIFI ---
-char ssid[] = "iPhone Liz";     // Nombre de tu red WiFi
-char pass[] = "lizlizliz";       // Contraseña de tu red WiFi
+char ssid[] = "COMPUTACION E4";     // Nombre de tu red WiFi
+char pass[] = "C0MPUT4C10N%16";       // Contraseña de tu red WiFi
 int status = WL_IDLE_STATUS;        
 WiFiServer server(80);
 volatile bool rutinaActiva = false; // Bandera para Rutina 1
