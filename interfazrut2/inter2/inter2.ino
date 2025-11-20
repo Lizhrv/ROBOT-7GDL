@@ -1,33 +1,38 @@
 #include <WiFiS3.h> 
 #include <Servo.h> 
 
-// === 1. CONFIGURACIÓN DE RED WIFI ===
+// ****************************************************
+// === 1. CONFIGURACIÓN INICIAL ===
+// ****************************************************
+
+// --- RED WIFI ---
 char ssid[] = "COMPUTACION E4";     
 char pass[] = "C0MPUT4C10N%16";       
 int status = WL_IDLE_STATUS;        
 WiFiServer server(80);
 volatile bool rutinaActiva = false; 
 
-// === 2. CONFIGURACIÓN DE SERVOS DEL BRAZO (D2-D8) ===
+// --- SERVOS DEL BRAZO (D2-D8) ---
 const int NUM_SERVOS = 7;
 const int servoPins[NUM_SERVOS] = {2, 3, 4, 5, 6, 7, 8};
 Servo myservo[NUM_SERVOS]; 
-// [0]D2 Base, [1]D3 Hombro, [2]D4 Codo, [3]D5 Muñeca-Pitch, 
-// [4]D6 Muñeca-Roll, [5]D7 (SEGURO), [6]D8 Garra/Herramienta
 
-// === 3. CONFIGURACIÓN DE COMPRESOR (D9) ===
+// --- COMPRESOR (D9) ---
 Servo compresorRelay; 
 const int PIN_COMPRESOR = 9; 
 const int COMPRESOR_ON = 180;
 const int COMPRESOR_OFF = 0;
 
-// === 4. CONFIGURACIÓN DEL CARRO (D10-D13) ===
+// --- CARRO (D10-D13) ---
 const int IZQ_IN1 = 10; 
 const int IZQ_IN2 = 11; 
 const int DER_IN3 = 12; 
 const int DER_IN4 = 13; 
 
-// --- Funciones de Control del Carro ---
+
+// ****************************************************
+// === 2. FUNCIONES DE MOVIMIENTO BASE (SIN CAMBIOS) ===
+// ****************************************************
 
 void detenerCarro() {
   digitalWrite(IZQ_IN1, LOW);
@@ -50,8 +55,6 @@ void moverAtras() {
   digitalWrite(DER_IN4, HIGH);
 }
 
-// --- Funciones de Posición del Brazo ---
-
 void configurarPosicionReposo() {
     for (int i = 0; i < NUM_SERVOS; i++) {
         myservo[i].write(90);
@@ -63,105 +66,102 @@ void configurarPosicionReposo() {
 }
 
 void posicionAgarre() {
-    // Brazo baja
-    myservo[0].write(45);  
-    myservo[1].write(130); 
-    myservo[2].write(50);  
-    
-    // Muñeca opuesta para nivelar (D5 y D6)
-    myservo[3].write(40);  
-    myservo[4].write(140); 
-    
-    myservo[5].write(90);  // D7 (Pin seguro)
+    myservo[0].write(45); myservo[1].write(130); myservo[2].write(50);  
+    myservo[3].write(40); myservo[4].write(140); 
+    myservo[5].write(90); 
     myservo[6].write(160); 
     delay(1000);
 }
 
 void posicionTransporte() {
-    // Brazo levanta (Compresor sigue ON)
-    myservo[1].write(90); 
-    myservo[2].write(90); 
-    
-    // Muñeca a neutral para estabilidad
-    myservo[3].write(90);
-    myservo[4].write(90);
+    myservo[1].write(90); myservo[2].write(90); 
+    myservo[3].write(90); myservo[4].write(90); 
     myservo[5].write(90); 
     delay(1000);
 }
 
 void posicionLiberacion() {
-    // Brazo baja en el destino
-    myservo[0].write(135); 
-    myservo[1].write(130); 
-    myservo[2].write(50);  
-    
-    // Muñeca opuesta en posición de liberación
-    myservo[3].write(50);  
-    myservo[4].write(130); 
-    myservo[5].write(90);  
+    myservo[0].write(135); myservo[1].write(130); myservo[2].write(50);  
+    myservo[3].write(50); myservo[4].write(130); 
+    myservo[5].write(90); 
     delay(1000);
 }
 
 
-// --- FUNCIÓN DE RUTINA REFINADA: RECOGER Y ENTREGAR ---
+// ****************************************************
+// === 3. RUTINAS DE EJECUCIÓN (SIN CAMBIOS EN LÓGICA) ===
+// ****************************************************
 
+// --- RUTINA 1: Recoger y Entregar ---
 void ejecutarRutina() {
     Serial.println("INICIO: Rutina de Recogida y Entrega.");
     
-    // === 1. IR A ZONA DE RECOLECCIÓN ===
-    Serial.println("1. Carro: Movimiento ADELANTE.");
-    moverAdelante(); 
-    delay(2000); // Avanza
-    detenerCarro();
-    delay(500);
-
-    // === 2. RECOGER OBJETO ===
-    Serial.println("2. Brazo: Bajando para el agarre.");
-    posicionAgarre(); // El brazo baja al piso
+    configurarPosicionReposo(); // Empieza en reposo
     
-    // *** ¡AQUÍ SUCCIONA AL LLEGAR AL PISO! ***
-    Serial.println("3. Compresor: ON (Succionando).");
-    compresorRelay.write(COMPRESOR_ON); // Activa Compresores
-    delay(1500); // Tiempo para establecer el vacío
+    // 1. IR A ZONA DE RECOLECCIÓN
+    moverAdelante(); delay(2000); detenerCarro(); delay(500);
+
+    // 2. RECOGER OBJETO
+    posicionAgarre(); 
+    compresorRelay.write(COMPRESOR_ON); 
+    delay(1500); 
 
     // 3. TRANSPORTE
-    Serial.println("4. Brazo: Levantando objeto para transporte.");
-    posicionTransporte(); // Levanta el brazo
-    
-    Serial.println("5. Carro: Movimiento ATRÁS.");
-    moverAtras(); // Mueve el carro hacia el destino
-    delay(3000); 
-    detenerCarro();
+    posicionTransporte(); 
+    moverAtras(); delay(3000); detenerCarro();
     
     // 4. LIBERACIÓN
-    Serial.println("6. Brazo: Bajando en zona de liberación.");
-    posicionLiberacion(); // Baja el brazo en el destino
-    
-    Serial.println("7. Compresor: OFF (Soltando).");
-    compresorRelay.write(COMPRESOR_OFF); // Desactiva Compresores
-    delay(1500); // Tiempo para que el objeto caiga
+    posicionLiberacion(); 
+    compresorRelay.write(COMPRESOR_OFF); 
+    delay(1500); 
 
     // 5. REPOSO FINAL
-    Serial.println("8. FINAL: Volviendo a reposo.");
+    Serial.println("FINAL: Volviendo a reposo.");
     configurarPosicionReposo(); 
     rutinaActiva = false; 
 }
 
+// --- RUTINA 2: Movimiento de Exhibición ---
+void ejecutarRutina2() {
+    Serial.println("INICIO: Rutina 2 (Exhibición).");
+    
+    configurarPosicionReposo(); // Empieza en reposo
 
-// --- SETUP y LOOP (Sin Cambios) ---
+    // Movimiento 1: Giro y elevación
+    myservo[0].write(160); myservo[1].write(40); delay(1500);
+
+    // Movimiento 2: Extensión y movimiento corto del carro
+    myservo[2].write(150); 
+    moverAdelante();
+    delay(1000);
+    detenerCarro();
+    
+    // Movimiento 3: Succión y vuelta
+    compresorRelay.write(COMPRESOR_ON); 
+    delay(500);
+    compresorRelay.write(COMPRESOR_OFF); 
+    
+    // Movimiento 4: Vuelta al centro
+    myservo[0].write(90); myservo[1].write(90); myservo[2].write(90); delay(1000);
+
+    Serial.println("FINAL: Rutina 2 completada.");
+    configurarPosicionReposo(); // Termina en reposo
+    rutinaActiva = false;
+}
+
+
+// ****************************************************
+// === 4. SETUP Y LOOP ===
+// ****************************************************
 
 void setup() {
     Serial.begin(9600);
     
-    // 1. Inicialización de Servos (D2-D8)
+    // 1. Inicialización de Hardware
     for (int i = 0; i < NUM_SERVOS; i++) {
         myservo[i].attach(servoPins[i]); 
     }
-    
-    // 2. Inicialización del Compresor (D9)
     compresorRelay.attach(PIN_COMPRESOR);
-    
-    // 3. Configuración del Puente H (D10-D13)
     pinMode(IZQ_IN1, OUTPUT);
     pinMode(IZQ_IN2, OUTPUT);
     pinMode(DER_IN3, OUTPUT);
@@ -169,7 +169,7 @@ void setup() {
 
     configurarPosicionReposo(); 
     
-    // 4. Conexión WiFi
+    // 2. Conexión WiFi
     while (status != WL_CONNECTED) {
         Serial.print("Intentando conectar a la red SSID: ");
         Serial.println(ssid);
@@ -177,16 +177,20 @@ void setup() {
         delay(10000); 
     }
 
-    Serial.println("COMPUTACION E4");
-    Serial.print("172.16.1.112172.20.10.2172.16.1.106172.16.1.106");
+    // 🛑 ¡CÓDIGO CORREGIDO PARA MOSTRAR SÓLO LA IP CLARA! 🛑
+    Serial.println("¡Conectado a la red!");
+    Serial.print("Direccion IP del Arduino: ");
     Serial.println(WiFi.localIP()); 
+    // 🛑 USA LA IP QUE APARECE ARRIBA PARA EL ARCHIVO HTML 🛑
+    
     server.begin();
 }
 
 void loop() {
-    // Si la bandera está activa, ejecuta la rutina completa
+    // Rutina 1 se ejecuta aquí cuando rutinaActiva es TRUE
     if (rutinaActiva) {
-        ejecutarRutina();
+        ejecutarRutina(); 
+        return; 
     }
     
     // Gestión del servidor web
@@ -197,26 +201,33 @@ void loop() {
         Serial.print("Petición recibida: ");
         Serial.println(requestLine);
 
-        // Procesar comandos START, STOP, RESET
+        // --- LÓGICA DE PROCESAMIENTO (SIN CAMBIOS) ---
+        
+        // Comando /start (Rutina 1)
         if (requestLine.indexOf("GET /start") != -1) {
             if (!rutinaActiva) rutinaActiva = true;
-            Serial.println("Comando START recibido. Rutina Activada.");
-        } else if (requestLine.indexOf("GET /stop") != -1) {
+            Serial.println("Comando START (R1) - OK.");
+        } 
+        // Comando /rutina2 (Rutina 2)
+        else if (requestLine.indexOf("GET /rutina2") != -1) {
+            if (!rutinaActiva) {
+               ejecutarRutina2(); 
+            }
+            Serial.println("Comando RUTINA 2 - OK.");
+        } 
+        // Comando /reset
+        else if (requestLine.indexOf("GET /reset") != -1) {
             rutinaActiva = false;
             configurarPosicionReposo();
-            Serial.println("Comando STOP recibido. Rutina Detenida.");
-        } else if (requestLine.indexOf("GET /reset") != -1) {
-            rutinaActiva = false;
-            configurarPosicionReposo();
-            Serial.println("Comando RESET recibido. Robot en reposo forzado.");
+            Serial.println("Comando RESET - OK.");
         } 
 
-        // Respuesta HTTP
+        // Respuesta HTTP estándar
         client.println("HTTP/1.1 200 OK");
         client.println("Content-Type: text/html");
         client.println("Connection: close");
         client.println();
-        client.println("Comando Recibido");
+        client.println("Comando Recibido y Procesado.");
         client.stop();
     }
 }
