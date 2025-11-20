@@ -2,8 +2,8 @@
 #include <Servo.h> 
 
 // CONFIGURACIÓN DE RED WIFI (¡ACTUALIZA ESTOS VALORES!)
-char ssid[] = "COMPUTACION E4";       // Nombre de tu red WiFi
-char pass[] = "C0MPUT4C10N%16";         // Contraseña de tu red WiFi
+char ssid[] = "iPhone Liz";       // Nombre de tu red WiFi
+char pass[] = "lizlizliz";         // Contraseña de tu red WiFi
 int status = WL_IDLE_STATUS;       
 
 // CONFIGURACIÓN DEL SERVIDOR
