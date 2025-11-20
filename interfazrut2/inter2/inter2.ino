@@ -178,7 +178,7 @@ void setup() {
     }
 
     Serial.println("COMPUTACION E4");
-    Serial.print("172.16.1.112172.20.10.2172.16.1.106");
+    Serial.print("172.16.1.112172.20.10.2172.16.1.106172.16.1.106");
     Serial.println(WiFi.localIP()); 
     server.begin();
 }
