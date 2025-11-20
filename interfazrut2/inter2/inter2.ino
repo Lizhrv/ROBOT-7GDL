@@ -31,7 +31,7 @@ const int DER_IN4 = 13;
 
 
 // ****************************************************
-// === 2. FUNCIONES DE MOVIMIENTO BASE (SIN CAMBIOS) ===
+// === 2. FUNCIONES DE MOVIMIENTO BASE (CORRECCIÓN EN REPOSO) ===
 // ****************************************************
 
 void detenerCarro() {
@@ -55,33 +55,46 @@ void moverAtras() {
   digitalWrite(DER_IN4, HIGH);
 }
 
+void girarDerecha() {
+    digitalWrite(IZQ_IN1, HIGH); 
+    digitalWrite(IZQ_IN2, LOW);
+    digitalWrite(DER_IN3, LOW); 
+    digitalWrite(DER_IN4, HIGH);
+}
+
+// 🛑 FUNCIÓN CRÍTICA: GARANTIZA QUE TODO VUELVA A 90°
 void configurarPosicionReposo() {
+    Serial.println("Robot en posicion de reposo (Todos a 90).");
     for (int i = 0; i < NUM_SERVOS; i++) {
         myservo[i].write(90);
     }
     compresorRelay.write(COMPRESOR_OFF); 
     detenerCarro();
     delay(1000); 
-    Serial.println("Robot en posicion de reposo.");
 }
 
 void posicionAgarre() {
-    myservo[0].write(45); myservo[1].write(130); myservo[2].write(50);  
+    myservo[0].write(45); 
+    myservo[1].write(130); // El hombro se levanta
+    myservo[2].write(50);  
     myservo[3].write(40); myservo[4].write(140); 
-    myservo[5].write(90); 
-    myservo[6].write(160); 
+    myservo[5].write(90); // D7 (Servo 6)
+    myservo[6].write(160); // D8 (Servo 7 - Garra)
     delay(1000);
 }
 
 void posicionTransporte() {
-    myservo[1].write(90); myservo[2].write(90); 
+    myservo[1].write(90); // Hombro vuelve a 90 para transporte
+    myservo[2].write(90); 
     myservo[3].write(90); myservo[4].write(90); 
     myservo[5].write(90); 
     delay(1000);
 }
 
 void posicionLiberacion() {
-    myservo[0].write(135); myservo[1].write(130); myservo[2].write(50);  
+    myservo[0].write(135); 
+    myservo[1].write(130); // El hombro se levanta
+    myservo[2].write(50);  
     myservo[3].write(50); myservo[4].write(130); 
     myservo[5].write(90); 
     delay(1000);
@@ -89,14 +102,14 @@ void posicionLiberacion() {
 
 
 // ****************************************************
-// === 3. RUTINAS DE EJECUCIÓN (SIN CAMBIOS EN LÓGICA) ===
+// === 3. RUTINAS DE EJECUCIÓN ===
 // ****************************************************
 
 // --- RUTINA 1: Recoger y Entregar ---
 void ejecutarRutina() {
     Serial.println("INICIO: Rutina de Recogida y Entrega.");
     
-    configurarPosicionReposo(); // Empieza en reposo
+    configurarPosicionReposo(); // 🛑 Empieza en reposo
     
     // 1. IR A ZONA DE RECOLECCIÓN
     moverAdelante(); delay(2000); detenerCarro(); delay(500);
@@ -117,7 +130,7 @@ void ejecutarRutina() {
 
     // 5. REPOSO FINAL
     Serial.println("FINAL: Volviendo a reposo.");
-    configurarPosicionReposo(); 
+    configurarPosicionReposo(); // 🛑 Termina en reposo
     rutinaActiva = false; 
 }
 
@@ -125,15 +138,15 @@ void ejecutarRutina() {
 void ejecutarRutina2() {
     Serial.println("INICIO: Rutina 2 (Exhibición).");
     
-    configurarPosicionReposo(); // Empieza en reposo
+    configurarPosicionReposo(); // 🛑 Empieza en reposo
 
     // Movimiento 1: Giro y elevación
     myservo[0].write(160); myservo[1].write(40); delay(1500);
 
-    // Movimiento 2: Extensión y movimiento corto del carro
+    // Movimiento 2: Extensión y GIRO DE EXHIBICIÓN
     myservo[2].write(150); 
-    moverAdelante();
-    delay(1000);
+    girarDerecha(); 
+    delay(2000); 
     detenerCarro();
     
     // Movimiento 3: Succión y vuelta
@@ -145,7 +158,7 @@ void ejecutarRutina2() {
     myservo[0].write(90); myservo[1].write(90); myservo[2].write(90); delay(1000);
 
     Serial.println("FINAL: Rutina 2 completada.");
-    configurarPosicionReposo(); // Termina en reposo
+    configurarPosicionReposo(); // 🛑 Termina en reposo
     rutinaActiva = false;
 }
 
@@ -177,11 +190,9 @@ void setup() {
         delay(10000); 
     }
 
-    // 🛑 ¡CÓDIGO CORREGIDO PARA MOSTRAR SÓLO LA IP CLARA! 🛑
     Serial.println("¡Conectado a la red!");
     Serial.print("Direccion IP del Arduino: ");
     Serial.println(WiFi.localIP()); 
-    // 🛑 USA LA IP QUE APARECE ARRIBA PARA EL ARCHIVO HTML 🛑
     
     server.begin();
 }
@@ -201,7 +212,7 @@ void loop() {
         Serial.print("Petición recibida: ");
         Serial.println(requestLine);
 
-        // --- LÓGICA DE PROCESAMIENTO (SIN CAMBIOS) ---
+        // --- LÓGICA DE PROCESAMIENTO ---
         
         // Comando /start (Rutina 1)
         if (requestLine.indexOf("GET /start") != -1) {
