@@ -1,229 +1,341 @@
-¡Listo\! He añadido el elemento de video justo **debajo del cuadro de texto** que muestra el estado (`#statusText`) y antes de la etiqueta de cierre `</div>` del contenedor principal.
-
-Para que funcione, debes **guardar el archivo de video** en la misma carpeta que este archivo HTML y **nombrarlo `video_yarbito.mp4`** (o cambiar el nombre en el código a la ruta correcta de tu video).
-
-Aquí está el código HTML modificado:
-
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Yarbito </title>
-    <style>
-        /* ESTILOS GENERALES Y FUENTE (No se han cambiado) */
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
-            color: #ecf0f1; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-        
-        /* CONTENEDOR PRINCIPAL Y CENTRADO (No se han cambiado) */
-        .container {
-            background-color: #34495e; 
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            text-align: center;
-            width: 90%;
-            max-width: 600px;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Yarbito - Interfaz Avanzada</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Variables CSS para facilitar cambios de color */
+        :root {
+            --primary-bg: linear-gradient(135deg, #0f0c29 0%, #302b63 100%);
+            --secondary-bg: #1a1a2e;
+            --accent-color-1: #00f0ff; /* Azul neón */
+            --accent-color-2: #ff007f; /* Rosa neón */
+            --button-green: #39ff14; /* Verde neón */
+            --button-blue: #00bfff; /* Azul claro neón */
+            --button-red: #ff073a; /* Rojo neón */
+            --text-light: #e0e0e0;
+            --text-dark: #121212;
+            --shadow-light: rgba(0, 240, 255, 0.4);
+            --shadow-dark: rgba(0, 0, 0, 0.7);
+        }
 
-        /* TÍTULO */
-        h1 { 
-            color: #f1c40f; 
-            font-size: 2.5em;
-            margin-bottom: 5px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
-        }
-        
-        /* SUBTÍTULO */
-        h2 {
-            color: #bdc3c7;
-            font-size: 1.2em;
-            margin-top: 0;
-            margin-bottom: 30px;
-        }
+        /* ESTILOS GENERALES */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--primary-bg);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden; /* Evita scroll horizontal */
+        }
 
-        /* ESTADO DEL ROBOT */
-        #statusText {
-            margin-top: 25px;
-            font-size: 1.3em;
-            font-weight: 600;
-            color: #ecf0f1;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #2c3e50; 
-            transition: all 0.5s ease;
-        }
+        /* CONTENEDOR PRINCIPAL */
+        .container {
+            background-color: var(--secondary-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 40px var(--shadow-light); /* Sombra más pronunciada */
+            text-align: center;
+            width: 95%;
+            max-width: 900px; /* Aumentado para mejor visualización en desktop */
+            margin: 20px; /* Margen para no pegar a los bordes */
+            border: 2px solid var(--accent-color-1); /* Borde neón */
+            display: grid;
+            grid-template-areas:
+                "header"
+                "controls"
+                "status"
+                "video";
+            gap: 25px; /* Espacio entre las secciones */
+        }
 
-        /* CONTROL DE BOTONES (CENTRADO) */
-        .controls {
-            display: flex;
-            flex-direction: column; 
-            align-items: center; 
-            gap: 20px; 
-            margin-top: 30px;
-        }
-        
-        /* ESTILO BASE DE BOTONES */
-        button {
-            padding: 15px 35px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            border-radius: 30px; 
-            transition: all 0.3s ease;
-            width: 100%; 
-            max-width: 350px;
-            text-transform: uppercase;
-        }
-        
-        /* COLORES ESPECÍFICOS PARA CADA FUNCIÓN */
-        #btnStart { 
-            background-color: #2ecc71; 
-            color: white; 
-            box-shadow: 0 5px 0 #27ae60;
-        }
-        #btnStart:active {
-            box-shadow: 0 2px 0 #27ae60;
-            transform: translateY(3px);
-        }
+        /* CABECERA (H1 y H2) */
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-color-1);
+            font-size: 3.2em;
+            margin-bottom: 0px;
+            text-shadow: 0 0 15px var(--accent-color-1), 0 0 25px var(--accent-color-1); /* Efecto neón */
+            letter-spacing: 3px;
+            grid-area: header;
+        }
+        
+        h2 {
+            color: var(--text-light);
+            font-size: 1.1em;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+            grid-area: header; /* Opcional: si quieres un subtitulo */
+        }
 
-        #btnRutina2 { 
-            background-color: #3498db; 
-            color: white; 
-            box-shadow: 0 5px 0 #2980b9;
-        }
-        #btnRutina2:active {
-            box-shadow: 0 2px 0 #2980b9;
-            transform: translateY(3px);
-        }
+        /* ESTADO DEL ROBOT */
+        #statusText {
+            grid-area: status;
+            margin-top: 0px; /* Ajustado */
+            padding: 15px;
+            font-size: 1.2em;
+            font-weight: 700;
+            background-color: #0d0d1a; /* Fondo oscuro */
+            border: 1px solid var(--accent-color-2); /* Borde rosa neón */
+            border-radius: 8px;
+            box-shadow: 0 0 10px var(--accent-color-2);
+            transition: all 0.4s ease-in-out;
+            color: var(--accent-color-1); /* Color de texto inicial */
+        }
 
-        #btnReset { 
-            background-color: #e74c3c; 
-            color: white; 
-            box-shadow: 0 5px 0 #c0392b;
-        }
-        #btnReset:active {
-            box-shadow: 0 2px 0 #c0392b;
-            transform: translateY(3px);
-        }
+        /* CONTROLES (Botones) */
+        .controls {
+            grid-area: controls;
+            display: flex;
+            flex-wrap: wrap; /* Permite que los botones se envuelvan en pantallas pequeñas */
+            justify-content: center;
+            gap: 20px; /* Espacio entre los botones */
+        }
+        
+        button {
+            padding: 18px 40px;
+            font-size: 1.2em;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 40px; /* Más redondeado */
+            transition: all 0.3s ease;
+            width: 100%; /* Por defecto ocupa el 100% en móviles */
+            max-width: 250px; /* Ancho máximo en pantallas grandes */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden; /* Para efectos de brillo */
+        }
 
-        /* NUEVO ESTILO PARA EL VIDEO */
-        .video-container {
-            margin-top: 30px;
+        /* Efecto de brillo al pasar el ratón */
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
             width: 100%;
-            max-width: 500px; /* Ancho máximo para el reproductor */
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.5s;
+            transform: skewX(-20deg);
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        /* COLORES DE BOTONES */
+        #btnStart {
+            background-color: var(--button-green);
+            color: var(--text-dark);
+            box-shadow: 0 0 15px var(--button-green), 0 5px 0px rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--button-green);
+        }
+        #btnStart:hover {
+            background-color: #55ff33;
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--button-green), 0 8px 0px rgba(0, 0, 0, 0.6);
+        }
+        #btnStart:active {
+            transform: translateY(1px);
+            box-shadow: 0 0 10px var(--button-green), 0 2px 0px rgba(0, 0, 0, 0.4);
+        }
+
+        #btnRutina2 {
+            background-color: var(--button-blue);
+            color: var(--text-dark);
+            box-shadow: 0 0 15px var(--button-blue), 0 5px 0px rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--button-blue);
+        }
+        #btnRutina2:hover {
+            background-color: #33d0ff;
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--button-blue), 0 8px 0px rgba(0, 0, 0, 0.6);
+        }
+        #btnRutina2:active {
+            transform: translateY(1px);
+            box-shadow: 0 0 10px var(--button-blue), 0 2px 0px rgba(0, 0, 0, 0.4);
+        }
+
+        #btnReset {
+            background-color: var(--button-red);
+            color: var(--text-light);
+            box-shadow: 0 0 15px var(--button-red), 0 5px 0px rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--button-red);
+        }
+        #btnReset:hover {
+            background-color: #ff3355;
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--button-red), 0 8px 0px rgba(0, 0, 0, 0.6);
+        }
+        #btnReset:active {
+            transform: translateY(1px);
+            box-shadow: 0 0 10px var(--button-red), 0 2px 0px rgba(0, 0, 0, 0.4);
+        }
+
+        /* CONTENEDOR DE VIDEO */
+        .video-wrapper {
+            grid-area: video;
+            margin-top: 15px; /* Espacio entre el estado y el video */
+            width: 100%;
+            max-width: 650px; /* Ancho máximo para el video en desktop */
             margin-left: auto;
             margin-right: auto;
+            border: 1px solid var(--accent-color-1); /* Borde neón */
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--shadow-light); /* Sombra neón */
+            overflow: hidden; /* Asegura que el video no se salga del borde redondeado */
         }
 
-        .video-container video {
+        .video-wrapper video {
             width: 100%;
             height: auto;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            display: block; /* Elimina espacio extra debajo del video */
         }
-    </style>
+
+        /* RESPONSIVIDAD PARA TABLETS Y DESKTOPS */
+        @media (min-width: 768px) {
+            .container {
+                padding: 50px;
+                grid-template-columns: 1fr 1fr; /* Divide en dos columnas */
+                grid-template-areas:
+                    "header header"
+                    "controls video"
+                    "status video";
+                gap: 30px 40px; /* Espacio entre filas y columnas */
+            }
+
+            h1 {
+                font-size: 4em;
+            }
+
+            h2 {
+                font-size: 1.4em;
+            }
+
+            .controls {
+                flex-direction: column; /* Botones apilados en desktop */
+                justify-content: flex-start; /* Alinea los botones arriba en su columna */
+            }
+
+            button {
+                max-width: none; /* Permite que los botones ocupen el ancho completo de la columna */
+                font-size: 1.3em;
+                padding: 20px 45px;
+            }
+            
+            #statusText {
+                font-size: 1.4em;
+                padding: 20px;
+                align-self: end; /* Alinea el texto de estado al final de su celda */
+            }
+
+            .video-wrapper {
+                margin-top: 0; /* No se necesita margen superior adicional */
+                margin-left: 0;
+                margin-right: 0;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
-    <h1> YARBITO </h1>
-   
+    <h1>YARBITO</h1>
+    <h2>Interfaz de Control Robótico</h2>
 
-    <div class="controls">
-        <button id="btnStart" onclick="startRoutine()">🔴 INICIAR RUTINA 1 </button>
-        
-        <button id="btnRutina2" onclick="startRoutine2()">🔵 INICIAR RUTINA 2</button>
+    <div class="controls">
+        <button id="btnStart" onclick="startRoutine()">INICIAR RUTINA 1</button>
+        <button id="btnRutina2" onclick="startRoutine2()">INICIAR RUTINA 2</button>
+        <button id="btnReset" onclick="resetRoutine()">RESET / REPOSO</button>
+    </div>
 
-        <button id="btnReset" onclick="resetRoutine()">⚫ RESET / REPOSO FORZADO</button>
-    </div>
+    <p id="statusText">Estado de Yarbito: Inicializando...</p>
 
-    <p id="statusText">Estado de Yarbito: Conectando...</p>
-    
-    <div class="video-container">
-        <video controls>
-            <source src="video_yarbito.mp4" type="video/mp4">
-            Tu navegador no soporta la etiqueta de video.
+    <div class="video-wrapper">
+        <video controls autoplay muted loop>
+            <source src="video solid.mp4" type="video/mp4">
+            Tu navegador no soporta el elemento de video.
         </video>
     </div>
-    </div>
+</div>
 
 <script>
-    // ****************************************************
-    // ** CONFIGURACIÓN JS **
-    // ****************************************************
-    
- 
-    const ARDUINO_IP = '172.20.10.2'; 
+    // ****************************************************
+    // ** CONFIGURACIÓN JS **
+    // ****************************************************
+    
+    // Configura la IP de tu ESP32 o Arduino con WiFi
+    const ARDUINO_IP = '172.20.10.2'; 
 
-    // Función auxiliar para actualizar el texto de estado en la página
-    function updateStatus(text, success) {
-        const statusElement = document.getElementById('statusText');
-        statusElement.innerText = 'Estado de Yarbito: ' + text;
-        
-        statusElement.style.backgroundColor = success ? '#2c3e50' : '#8c2f2f'; 
-        statusElement.style.color = success ? '#ecf0f1' : '#f8d7da'; 
-    }
+    // Función auxiliar para actualizar el texto de estado en la página
+    function updateStatus(text, isSuccess) {
+        const statusElement = document.getElementById('statusText');
+        statusElement.innerText = 'Estado de Yarbito: ' + text;
+        
+        // Colores de neón para el estado
+        if (isSuccess) {
+            statusElement.style.color = 'var(--accent-color-1)';
+            statusElement.style.boxShadow = '0 0 10px var(--accent-color-1)';
+            statusElement.style.borderColor = 'var(--accent-color-1)';
+        } else {
+            statusElement.style.color = 'var(--button-red)';
+            statusElement.style.boxShadow = '0 0 10px var(--button-red)';
+            statusElement.style.borderColor = 'var(--button-red)';
+        }
+    }
 
-    // Función genérica para enviar comandos (Sin alerts de error)
-    function sendCommand(command, successMessage, failureMessage) {
-        updateStatus('Enviando comando ' + command + '...', true);
-        
-        // CORRECCIÓN: Se limpia la URL para solo usar la IP y el comando.
-        const url = 'http://' + ARDUINO_IP + command;
+    // Función genérica para enviar comandos
+    function sendCommand(command, successMessage, failureMessage) {
+        updateStatus('Enviando comando ' + command.replace('/', '') + '...', true);
+        
+        const url = 'http://' + ARDUINO_IP + command;
 
-        fetch(url) 
-            .then(response => {
-                if (response.ok) {
-                    updateStatus(successMessage, true);
-                } else {
-                    updateStatus(failureMessage + ' (Cód. HTTP: ' + response.status + ')', false);
-                }
-            })
-            .catch(error => {
-                // Muestra error de conexión en la caja de estado (sin alert)
-                updateStatus('ERROR: No se pudo conectar. Verifique la IP (' + ARDUINO_IP + ') y la red.', false);
-                console.error('Error de conexión:', error); 
-            });
-    }
+        fetch(url) 
+            .then(response => {
+                if (response.ok) {
+                    updateStatus(successMessage, true);
+                } else {
+                    updateStatus(failureMessage + ' (Cód. HTTP: ' + response.status + ')', false);
+                }
+            })
+            .catch(error => {
+                updateStatus('ERROR: No se pudo conectar. Verifique la IP (' + ARDUINO_IP + ') y la red.', false);
+                console.error('Error de conexión:', error); 
+            });
+    }
 
-    // ****************************************************
-    // ** COMANDOS DE RUTINA **
-    // ****************************************************
-    
-    // Rutina 1: Recoger/Soltar (Comando /start)
-    function startRoutine() {
-        sendCommand('/start', 'Rutina 1 (Recogida) activada.', 'Fallo al iniciar Rutina 1.');
-    }
+    // ****************************************************
+    // ** COMANDOS DE RUTINA **
+    // ****************************************************
+    
+    function startRoutine() {
+        sendCommand('/start', 'Rutina 1 (Recogida) activada.', 'Fallo al iniciar Rutina 1.');
+    }
 
-    // Rutina 2: (Nuevo comando /rutina2)
-    function startRoutine2() {
-        sendCommand('/rutina2', 'Rutina 2 (Alterna) activada.', 'Fallo al iniciar Rutina 2.');
-    }
+    function startRoutine2() {
+        sendCommand('/rutina2', 'Rutina 2 (Exhibición) activada.', 'Fallo al iniciar Rutina 2.');
+    }
 
-    // Comando RESET: Pone al robot en la posición de reposo
-    function resetRoutine() {
-        sendCommand('/reset', 'Yarbito restablecido y en reposo.', 'Fallo al ejecutar RESET.');
-    }
+    function resetRoutine() {
+        sendCommand('/reset', 'Yarbito restablecido y en reposo.', 'Fallo al ejecutar RESET.');
+    }
 
-    // Inicializa el estado al cargar la página
-    window.onload = function() {
-        updateStatus('Listo para operación.', true);
-    };
+    // Inicializa el estado al cargar la página
+    window.onload = function() {
+        updateStatus('Listo para operación.', true);
+    };
 </script>
 
 </body>
 </html>
-```
