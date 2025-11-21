@@ -6,7 +6,7 @@
 // ****************************************************
 
 // --- RED WIFI ---
-char ssid[] = "iPhone de Liz";     
+char ssid[] = "iPhone Liz";     
 char pass[] = "lizlizliz";       
 int status = WL_IDLE_STATUS;        
 WiFiServer server(80);
