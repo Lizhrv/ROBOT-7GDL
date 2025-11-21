@@ -18,10 +18,9 @@
             --text-light: #e0e0e0;
             --text-dark: #121212;
             --shadow-light: rgba(0, 240, 255, 0.4);
-            --shadow-dark: rgba(0, 0, 0, 0.7);
         }
 
-        /* ESTILOS GENERALES */
+        /* ESTILOS GENERALES Y LAYOUT BASE (MÓVIL) */
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
@@ -29,75 +28,76 @@
             background: var(--primary-bg);
             color: var(--text-light);
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            overflow-x: hidden; /* Evita scroll horizontal */
+            padding: 20px;
         }
 
-        /* CONTENEDOR PRINCIPAL */
+        /* CONTENEDOR PRINCIPAL: Usa Flexbox para centrado y Grid para contenido */
         .container {
             background-color: var(--secondary-bg);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 0 40px var(--shadow-light); /* Sombra más pronunciada */
+            box-shadow: 0 0 40px var(--shadow-light); 
+            width: 100%;
+            max-width: 900px;
+            border: 2px solid var(--accent-color-1); 
             text-align: center;
-            width: 95%;
-            max-width: 900px; /* Aumentado para mejor visualización en desktop */
-            margin: 20px; /* Margen para no pegar a los bordes */
-            border: 2px solid var(--accent-color-1); /* Borde neón */
+            
+            /* CSS Grid para organizar el contenido interno */
             display: grid;
+            grid-template-columns: 1fr; /* Columna única para móvil */
             grid-template-areas:
                 "header"
                 "controls"
                 "status"
                 "video";
-            gap: 25px; /* Espacio entre las secciones */
-        }
-
-        /* CABECERA (H1 y H2) */
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--accent-color-1);
-            font-size: 3.2em;
-            margin-bottom: 0px;
-            text-shadow: 0 0 15px var(--accent-color-1), 0 0 25px var(--accent-color-1); /* Efecto neón */
-            letter-spacing: 3px;
-            grid-area: header;
+            gap: 25px; 
         }
         
-        h2 {
+        /* CABECERA (H1) */
+        h1 {
+            grid-area: header;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-color-1);
+            font-size: 2.5em; /* Reducido para móvil */
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px var(--accent-color-1), 0 0 20px var(--accent-color-1);
+            letter-spacing: 3px;
+        }
+
+        /* SUBTÍTULO (opcional) */
+        .subtitle {
             color: var(--text-light);
-            font-size: 1.1em;
+            font-size: 1em;
             margin-top: 5px;
-            margin-bottom: 20px;
             opacity: 0.8;
-            grid-area: header; /* Opcional: si quieres un subtitulo */
+            margin-bottom: 20px;
         }
 
         /* ESTADO DEL ROBOT */
         #statusText {
             grid-area: status;
-            margin-top: 0px; /* Ajustado */
             padding: 15px;
             font-size: 1.2em;
             font-weight: 700;
-            background-color: #0d0d1a; /* Fondo oscuro */
-            border: 1px solid var(--accent-color-2); /* Borde rosa neón */
+            background-color: #0d0d1a; 
+            border: 1px solid var(--accent-color-2); 
             border-radius: 8px;
             box-shadow: 0 0 10px var(--accent-color-2);
             transition: all 0.4s ease-in-out;
-            color: var(--accent-color-1); /* Color de texto inicial */
+            color: var(--accent-color-1); 
         }
 
         /* CONTROLES (Botones) */
         .controls {
             grid-area: controls;
             display: flex;
-            flex-wrap: wrap; /* Permite que los botones se envuelvan en pantallas pequeñas */
+            flex-direction: column; /* Apilados en móvil */
             justify-content: center;
-            gap: 20px; /* Espacio entre los botones */
+            align-items: center;
+            gap: 20px;
         }
         
         button {
@@ -107,18 +107,18 @@
             font-weight: bold;
             cursor: pointer;
             border: none;
-            border-radius: 40px; /* Más redondeado */
+            border-radius: 40px; 
             transition: all 0.3s ease;
-            width: 100%; /* Por defecto ocupa el 100% en móviles */
-            max-width: 250px; /* Ancho máximo en pantallas grandes */
+            width: 100%;
+            max-width: 300px; /* Ancho máximo en móvil */
             text-transform: uppercase;
             letter-spacing: 1px;
             position: relative;
-            overflow: hidden; /* Para efectos de brillo */
+            overflow: hidden; 
         }
-
-        /* Efecto de brillo al pasar el ratón */
-        button::before {
+        
+        /* Efectos de Hover/Active (Brillo y Presión) */
+        button::before { /* Efecto brillo */
             content: '';
             position: absolute;
             top: 0;
@@ -129,107 +129,64 @@
             transition: all 0.5s;
             transform: skewX(-20deg);
         }
+        button:hover::before { left: 100%; }
+        
+        #btnStart { background-color: var(--button-green); color: var(--text-dark); box-shadow: 0 0 15px var(--button-green), 0 5px 0px rgba(0, 0, 0, 0.4); }
+        #btnStart:hover { background-color: #55ff33; transform: translateY(-2px); box-shadow: 0 0 25px var(--button-green), 0 8px 0px rgba(0, 0, 0, 0.6); }
+        #btnStart:active { transform: translateY(1px); box-shadow: 0 0 10px var(--button-green), 0 2px 0px rgba(0, 0, 0, 0.4); }
 
-        button:hover::before {
-            left: 100%;
-        }
+        #btnRutina2 { background-color: var(--button-blue); color: var(--text-dark); box-shadow: 0 0 15px var(--button-blue), 0 5px 0px rgba(0, 0, 0, 0.4); }
+        #btnRutina2:hover { background-color: #33d0ff; transform: translateY(-2px); box-shadow: 0 0 25px var(--button-blue), 0 8px 0px rgba(0, 0, 0, 0.6); }
+        #btnRutina2:active { transform: translateY(1px); box-shadow: 0 0 10px var(--button-blue), 0 2px 0px rgba(0, 0, 0, 0.4); }
 
-        /* COLORES DE BOTONES */
-        #btnStart {
-            background-color: var(--button-green);
-            color: var(--text-dark);
-            box-shadow: 0 0 15px var(--button-green), 0 5px 0px rgba(0, 0, 0, 0.4);
-            border: 2px solid var(--button-green);
-        }
-        #btnStart:hover {
-            background-color: #55ff33;
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px var(--button-green), 0 8px 0px rgba(0, 0, 0, 0.6);
-        }
-        #btnStart:active {
-            transform: translateY(1px);
-            box-shadow: 0 0 10px var(--button-green), 0 2px 0px rgba(0, 0, 0, 0.4);
-        }
+        #btnReset { background-color: var(--button-red); color: var(--text-light); box-shadow: 0 0 15px var(--button-red), 0 5px 0px rgba(0, 0, 0, 0.4); }
+        #btnReset:hover { background-color: #ff3355; transform: translateY(-2px); box-shadow: 0 0 25px var(--button-red), 0 8px 0px rgba(0, 0, 0, 0.6); }
+        #btnReset:active { transform: translateY(1px); box-shadow: 0 0 10px var(--button-red), 0 2px 0px rgba(0, 0, 0, 0.4); }
 
-        #btnRutina2 {
-            background-color: var(--button-blue);
-            color: var(--text-dark);
-            box-shadow: 0 0 15px var(--button-blue), 0 5px 0px rgba(0, 0, 0, 0.4);
-            border: 2px solid var(--button-blue);
-        }
-        #btnRutina2:hover {
-            background-color: #33d0ff;
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px var(--button-blue), 0 8px 0px rgba(0, 0, 0, 0.6);
-        }
-        #btnRutina2:active {
-            transform: translateY(1px);
-            box-shadow: 0 0 10px var(--button-blue), 0 2px 0px rgba(0, 0, 0, 0.4);
-        }
-
-        #btnReset {
-            background-color: var(--button-red);
-            color: var(--text-light);
-            box-shadow: 0 0 15px var(--button-red), 0 5px 0px rgba(0, 0, 0, 0.4);
-            border: 2px solid var(--button-red);
-        }
-        #btnReset:hover {
-            background-color: #ff3355;
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px var(--button-red), 0 8px 0px rgba(0, 0, 0, 0.6);
-        }
-        #btnReset:active {
-            transform: translateY(1px);
-            box-shadow: 0 0 10px var(--button-red), 0 2px 0px rgba(0, 0, 0, 0.4);
-        }
 
         /* CONTENEDOR DE VIDEO */
         .video-wrapper {
             grid-area: video;
-            margin-top: 15px; /* Espacio entre el estado y el video */
             width: 100%;
-            max-width: 650px; /* Ancho máximo para el video en desktop */
+            max-width: 650px; 
             margin-left: auto;
             margin-right: auto;
-            border: 1px solid var(--accent-color-1); /* Borde neón */
+            border: 1px solid var(--accent-color-1); 
             border-radius: 10px;
-            box-shadow: 0 0 20px var(--shadow-light); /* Sombra neón */
-            overflow: hidden; /* Asegura que el video no se salga del borde redondeado */
+            box-shadow: 0 0 20px var(--shadow-light); 
+            overflow: hidden; 
         }
 
         .video-wrapper video {
             width: 100%;
             height: auto;
-            display: block; /* Elimina espacio extra debajo del video */
+            display: block;
         }
 
-        /* RESPONSIVIDAD PARA TABLETS Y DESKTOPS */
+        /* RESPONSIVIDAD PARA DESKTOP */
         @media (min-width: 768px) {
             .container {
                 padding: 50px;
-                grid-template-columns: 1fr 1fr; /* Divide en dos columnas */
+                /* Diseño de dos columnas: Controles | Video */
+                grid-template-columns: 1fr 1.5fr; /* Columna de video más ancha */
                 grid-template-areas:
                     "header header"
                     "controls video"
                     "status video";
-                gap: 30px 40px; /* Espacio entre filas y columnas */
+                gap: 30px 40px; 
             }
 
             h1 {
                 font-size: 4em;
             }
-
-            h2 {
-                font-size: 1.4em;
-            }
-
+            
             .controls {
-                flex-direction: column; /* Botones apilados en desktop */
-                justify-content: flex-start; /* Alinea los botones arriba en su columna */
+                flex-direction: column; /* Los botones se apilan */
+                align-items: stretch; /* Ocupan todo el ancho de su columna */
             }
 
             button {
-                max-width: none; /* Permite que los botones ocupen el ancho completo de la columna */
+                max-width: none; /* Ignora el max-width de móvil */
                 font-size: 1.3em;
                 padding: 20px 45px;
             }
@@ -237,13 +194,7 @@
             #statusText {
                 font-size: 1.4em;
                 padding: 20px;
-                align-self: end; /* Alinea el texto de estado al final de su celda */
-            }
-
-            .video-wrapper {
-                margin-top: 0; /* No se necesita margen superior adicional */
-                margin-left: 0;
-                margin-right: 0;
+                align-self: end; /* Alinea abajo en la columna */
             }
         }
     </style>
@@ -252,7 +203,7 @@
 
 <div class="container">
     <h1>YARBITO</h1>
-    <h2>Interfaz de Control Robótico</h2>
+    <p class="subtitle">Interfaz de Control Robótico</p>
 
     <div class="controls">
         <button id="btnStart" onclick="startRoutine()">INICIAR RUTINA 1</button>
@@ -272,7 +223,7 @@
 
 <script>
     // ****************************************************
-    // ** CONFIGURACIÓN JS **
+    // ** CÓDIGO JAVASCRIPT **
     // ****************************************************
     
     // Configura la IP de tu ESP32 o Arduino con WiFi
@@ -283,7 +234,7 @@
         const statusElement = document.getElementById('statusText');
         statusElement.innerText = 'Estado de Yarbito: ' + text;
         
-        // Colores de neón para el estado
+        // Estilos para el efecto de neón en el estado
         if (isSuccess) {
             statusElement.style.color = 'var(--accent-color-1)';
             statusElement.style.boxShadow = '0 0 10px var(--accent-color-1)';
