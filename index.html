@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control de Yarbito </title>
     <style>
-        /* ESTILOS GENERALES Y FUENTE (No se han cambiado) */
+        /* ESTILOS GENERALES Y FUENTE */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             margin: 0; 
@@ -19,7 +19,7 @@
             min-height: 100vh;
         }
         
-        /* CONTENEDOR PRINCIPAL Y CENTRADO (No se han cambiado) */
+        /* CONTENEDOR PRINCIPAL Y CENTRADO */
         .container {
             background-color: #34495e; 
             padding: 40px;
@@ -112,20 +112,20 @@
             transform: translateY(3px);
         }
 
-        /* NUEVO ESTILO PARA EL VIDEO */
+        /* NUEVOS ESTILOS PARA EL VIDEO (Mínimos para responsividad y espacio) */
         .video-container {
-            margin-top: 30px;
-            width: 100%;
-            max-width: 500px; /* Ancho máximo para el reproductor */
-            margin-left: auto;
-            margin-right: auto;
+            margin-top: 30px; /* Espacio entre el estado y el video */
+            width: 100%; /* Ocupa todo el ancho disponible del contenedor padre */
+            max-width: 500px; /* Limita el ancho máximo del video */
+            margin-left: auto; /* Centra el video */
+            margin-right: auto; /* Centra el video */
         }
 
         .video-container video {
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            width: 100%; /* El video se ajusta al ancho del contenedor */
+            height: auto; /* Mantiene la proporción */
+            border-radius: 10px; /* Bordes redondeados para el video */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); /* Sombra para el video */
         }
     </style>
 </head>
@@ -144,14 +144,14 @@
     </div>
 
     <p id="statusText">Estado de Yarbito: Conectando...</p>
-    
+
     <div class="video-container">
-        <video controls>
+        <video controls autoplay muted loop>
             <source src="video_yarbito.mp4" type="video/mp4">
             Tu navegador no soporta la etiqueta de video.
         </video>
     </div>
-    </div>
+</div>
 
 <script>
     // ****************************************************
