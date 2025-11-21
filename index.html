@@ -1,3 +1,10 @@
+¡Listo\! He añadido el elemento de video justo **debajo del cuadro de texto** que muestra el estado (`#statusText`) y antes de la etiqueta de cierre `</div>` del contenedor principal.
+
+Para que funcione, debes **guardar el archivo de video** en la misma carpeta que este archivo HTML y **nombrarlo `video_yarbito.mp4`** (o cambiar el nombre en el código a la ruta correcta de tu video).
+
+Aquí está el código HTML modificado:
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control de Yarbito </title>
     <style>
-        /* ESTILOS GENERALES Y FUENTE */
+        /* ESTILOS GENERALES Y FUENTE (No se han cambiado) */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             margin: 0; 
@@ -19,7 +26,7 @@
             min-height: 100vh;
         }
         
-        /* CONTENEDOR PRINCIPAL Y CENTRADO */
+        /* CONTENEDOR PRINCIPAL Y CENTRADO (No se han cambiado) */
         .container {
             background-color: #34495e; 
             padding: 40px;
@@ -112,20 +119,20 @@
             transform: translateY(3px);
         }
 
-        /* NUEVOS ESTILOS PARA EL VIDEO (Mínimos para responsividad y espacio) */
+        /* NUEVO ESTILO PARA EL VIDEO */
         .video-container {
-            margin-top: 30px; /* Espacio entre el estado y el video */
-            width: 100%; /* Ocupa todo el ancho disponible del contenedor padre */
-            max-width: 500px; /* Limita el ancho máximo del video */
-            margin-left: auto; /* Centra el video */
-            margin-right: auto; /* Centra el video */
+            margin-top: 30px;
+            width: 100%;
+            max-width: 500px; /* Ancho máximo para el reproductor */
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .video-container video {
-            width: 100%; /* El video se ajusta al ancho del contenedor */
-            height: auto; /* Mantiene la proporción */
-            border-radius: 10px; /* Bordes redondeados para el video */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); /* Sombra para el video */
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
@@ -144,14 +151,14 @@
     </div>
 
     <p id="statusText">Estado de Yarbito: Conectando...</p>
-
+    
     <div class="video-container">
-        <video controls autoplay muted loop>
-            <source src="video solid.mp4" type="video/mp4">
-           
+        <video controls>
+            <source src="video_yarbito.mp4" type="video/mp4">
+            Tu navegador no soporta la etiqueta de video.
         </video>
     </div>
-</div>
+    </div>
 
 <script>
     // ****************************************************
@@ -219,3 +226,4 @@
 
 </body>
 </html>
+```
