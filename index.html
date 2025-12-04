@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Yarbito </title>
+    <title>Yarbito Control Remoto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         /* Variables CSS para facilitar cambios de color */
@@ -34,7 +35,7 @@
             padding: 20px;
         }
 
-        /* CONTENEDOR PRINCIPAL: Usa Flexbox para centrado y Grid para contenido */
+        /* CONTENEDOR PRINCIPAL */
         .container {
             background-color: var(--secondary-bg);
             padding: 30px;
@@ -61,19 +62,10 @@
             grid-area: header;
             font-family: 'Orbitron', sans-serif;
             color: var(--accent-color-1);
-            font-size: 2.5em; /* Reducido para móvil */
+            font-size: 2.5em; 
             margin-bottom: 5px;
             text-shadow: 0 0 10px var(--accent-color-1), 0 0 20px var(--accent-color-1);
             letter-spacing: 3px;
-        }
-
-        /* SUBTÍTULO (opcional) */
-        .subtitle {
-            color: var(--text-light);
-            font-size: 1em;
-            margin-top: 5px;
-            opacity: 0.8;
-            margin-bottom: 20px;
         }
 
         /* ESTADO DEL ROBOT */
@@ -94,7 +86,7 @@
         .controls {
             grid-area: controls;
             display: flex;
-            flex-direction: column; /* Apilados en móvil */
+            flex-direction: column; 
             justify-content: center;
             align-items: center;
             gap: 20px;
@@ -110,7 +102,7 @@
             border-radius: 40px; 
             transition: all 0.3s ease;
             width: 100%;
-            max-width: 300px; /* Ancho máximo en móvil */
+            max-width: 300px; 
             text-transform: uppercase;
             letter-spacing: 1px;
             position: relative;
@@ -168,7 +160,7 @@
             .container {
                 padding: 50px;
                 /* Diseño de dos columnas: Controles | Video */
-                grid-template-columns: 1fr 1.5fr; /* Columna de video más ancha */
+                grid-template-columns: 1fr 1.5fr; 
                 grid-template-areas:
                     "header header"
                     "controls video"
@@ -181,12 +173,12 @@
             }
             
             .controls {
-                flex-direction: column; /* Los botones se apilan */
-                align-items: stretch; /* Ocupan todo el ancho de su columna */
+                flex-direction: column; 
+                align-items: stretch; 
             }
 
             button {
-                max-width: none; /* Ignora el max-width de móvil */
+                max-width: none; 
                 font-size: 1.3em;
                 padding: 20px 45px;
             }
@@ -194,7 +186,7 @@
             #statusText {
                 font-size: 1.4em;
                 padding: 20px;
-                align-self: end; /* Alinea abajo en la columna */
+                align-self: end; 
             }
         }
     </style>
@@ -203,20 +195,20 @@
 
 <div class="container">
     <h1>YARBITO</h1>
-   
-
+    
     <div class="controls">
-        <button id="btnStart" onclick="startRoutine()">INICIAR RUTINA 1</button>
-        <button id="btnRutina2" onclick="startRoutine2()">INICIAR RUTINA 2</button>
+        <button id="btnStart" onclick="startRoutine()">INICIAR RUTINA 1 (Servos)</button>
+        <button id="btnRutina2" onclick="startRoutine2()">INICIAR RUTINA 2 (Carro + Compresor)</button>
         <button id="btnReset" onclick="resetRoutine()">RESET / REPOSO</button>
     </div>
 
     <p id="statusText">Estado de Yarbito: Inicializando...</p>
 
     <div class="video-wrapper">
-        <video controls autoplay muted loop>
+        <!-- Usa un placeholder de video si el archivo 'video solid.mp4' no está disponible -->
+        <video controls autoplay muted loop poster="https://placehold.co/650x366/302b63/00f0ff?text=FEED+DE+CÁMARA+DEL+ROBOT">
             <source src="video solid.mp4" type="video/mp4">
-         
+            Tu navegador no soporta la etiqueta de video.
         </video>
     </div>
 </div>
@@ -226,7 +218,7 @@
     // ** CÓDIGO JAVASCRIPT **
     // ****************************************************
     
-    // Configura la IP de tu ESP32 o Arduino con WiFi
+    // Configura la IP de tu Arduino/ESP32 con WiFi (MANTÉN ESTA IP ESTÁTICA)
     const ARDUINO_IP = '172.16.1.113'; 
 
     // Función auxiliar para actualizar el texto de estado en la página
@@ -246,11 +238,19 @@
         }
     }
 
-    // Función genérica para enviar comandos
+    /**
+     * Función genérica para enviar comandos HTTP GET al Arduino.
+     * @param {string} command El path del comando (ej: '/start', '/rutina2')
+     * @param {string} successMessage Mensaje a mostrar si el comando es exitoso.
+     * @param {string} failureMessage Mensaje a mostrar si el comando falla.
+     */
     function sendCommand(command, successMessage, failureMessage) {
         updateStatus('Enviando comando ' + command.replace('/', '') + '...', true);
         
-        const url = 'http://' + ARDUINO_IP + command;
+        // *****************************************************************
+        // 🛑 CORRECCIÓN CLAVE: La URL ahora incluye la IP Y el comando.
+        const url = 'http://' + ARDUINO_IP + command; 
+        // *****************************************************************
 
         fetch(url) 
             .then(response => {
@@ -261,7 +261,8 @@
                 }
             })
             .catch(error => {
-                updateStatus('ERROR: No se pudo conectar. Verifique la IP (' + ARDUINO_IP + ') y la red.', false);
+                // Muestra la IP completa y el error de red
+                updateStatus('ERROR: No se pudo conectar a ' + ARDUINO_IP + '. Verifique la IP y la red.', false);
                 console.error('Error de conexión:', error); 
             });
     }
@@ -271,11 +272,11 @@
     // ****************************************************
     
     function startRoutine() {
-        sendCommand('/start', 'Rutina 1 (Recogida) activada.', 'Fallo al iniciar Rutina 1.');
+        sendCommand('/start', 'Rutina 1 (Movimiento de Servos) activada.', 'Fallo al iniciar Rutina 1.');
     }
 
     function startRoutine2() {
-        sendCommand('/rutina2', 'Rutina 2 (Exhibición) activada.', 'Fallo al iniciar Rutina 2.');
+        sendCommand('/rutina2', 'Rutina 2 (Carro y Compresor) activada.', 'Fallo al iniciar Rutina 2.');
     }
 
     function resetRoutine() {
@@ -284,7 +285,7 @@
 
     // Inicializa el estado al cargar la página
     window.onload = function() {
-        updateStatus('Listo para operación.', true);
+        updateStatus('Listo para operación. IP configurada: ' + ARDUINO_IP, true);
     };
 </script>
 
