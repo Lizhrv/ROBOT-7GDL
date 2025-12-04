@@ -9,7 +9,6 @@
     <style>
         /* ======================================= */
         /* === CÓDIGO CSS (ESTILOS) === */
-        /* Los errores que veías antes estaban aquí. Estos no van en Arduino. */
         /* ======================================= */
         :root {
             --primary-bg: linear-gradient(135deg, #0f0c29 0%, #302b63 100%);
@@ -198,7 +197,6 @@
     <p id="statusText">Estado de Yarbito: Inicializando...</p>
 
     <div class="video-wrapper">
-        <!-- Placeholder de video -->
         <video controls autoplay muted loop poster="https://placehold.co/650x366/302b63/00f0ff?text=FEED+DE+CÁMARA+DEL+ROBOT">
             <source src="video solid.mp4" type="video/mp4">
             Tu navegador no soporta la etiqueta de video.
@@ -211,49 +209,62 @@
     // ** CÓDIGO JAVASCRIPT (Lógica de comunicación) **
     // ****************************************************
     
-    // 🛑 CRÍTICO: Esta IP DEBE COINCIDIR con la que tu Arduino muestra en el Monitor Serial.
+    // 🛑 CRÍTICO: ESTA IP DEBE COINCIDIR con la que tu Arduino muestra en el Monitor Serial.
     const ARDUINO_IP = '172.16.1.113'; 
+    let isExecuting = false; // Bandera para prevenir spam de comandos
 
     // Función auxiliar para actualizar el texto de estado en la página
     function updateStatus(text, isSuccess) {
         const statusElement = document.getElementById('statusText');
         statusElement.innerText = 'Estado de Yarbito: ' + text;
         
+        const successColor = 'var(--accent-color-1)';
+        const failureColor = 'var(--button-red)';
+
         // Estilos para el efecto de neón en el estado
-        if (isSuccess) {
-            statusElement.style.color = 'var(--accent-color-1)';
-            statusElement.style.boxShadow = '0 0 10px var(--accent-color-1)';
-            statusElement.style.borderColor = 'var(--accent-color-1)';
-        } else {
-            statusElement.style.color = 'var(--button-red)';
-            statusElement.style.boxShadow = '0 0 10px var(--button-red)';
-            statusElement.style.borderColor = 'var(--button-red)';
-        }
+        statusElement.style.color = isSuccess ? successColor : failureColor;
+        statusElement.style.boxShadow = '0 0 10px ' + (isSuccess ? successColor : failureColor);
+        statusElement.style.borderColor = isSuccess ? successColor : failureColor;
     }
 
     /**
      * Función genérica para enviar comandos HTTP GET al Arduino.
      * @param {string} command El path del comando (ej: '/start', '/rutina2')
      */
-    function sendCommand(command, successMessage, failureMessage) {
+    async function sendCommand(command, successMessage, failureMessage) {
+        if (isExecuting) {
+            updateStatus('Espera, ya hay un comando en proceso...', false);
+            return;
+        }
+
         updateStatus('Enviando comando ' + command.replace('/', '') + '...', true);
+        isExecuting = true; // Bloquea nuevos comandos
         
         // Construye la URL completa con la IP y el comando
         const url = 'http://' + ARDUINO_IP + command; 
 
-        fetch(url) 
-            .then(response => {
-                if (response.ok) {
-                    updateStatus(successMessage, true);
-                } else {
-                    updateStatus(failureMessage + ' (Cód. HTTP: ' + response.status + ')', false);
-                }
-            })
-            .catch(error => {
-                // Muestra la IP completa y el error de red
-                updateStatus('ERROR: No se pudo conectar a ' + ARDUINO_IP + '. Verifique la IP y la red.', false);
-                console.error('Error de conexión:', error); 
-            });
+        try {
+            const response = await fetch(url); 
+            
+            if (response.ok) {
+                // Puedes leer el texto simple de respuesta del Arduino si quieres (opcional)
+                const arduinoResponse = await response.text();
+                console.log("Respuesta del Arduino:", arduinoResponse);
+                
+                updateStatus(successMessage, true);
+            } else {
+                updateStatus(failureMessage + ' (Cód. HTTP: ' + response.status + ')', false);
+            }
+        } catch (error) {
+            // Muestra la IP completa y el error de red
+            updateStatus('ERROR: No se pudo conectar a ' + ARDUINO_IP + '. Verifique la IP y la red.', false);
+            console.error('Error de conexión:', error); 
+        } finally {
+            // Desbloquea la ejecución después de un breve retraso para evitar doble clic rápido.
+            setTimeout(() => {
+                isExecuting = false;
+            }, 500); 
+        }
     }
 
     // ****************************************************
@@ -265,7 +276,7 @@
     }
 
     function startRoutine2() {
-        sendCommand('/rutina2', 'Rutina 2 (Carro y Compresor) activada.', 'Fallo al iniciar Rutina 2.');
+        sendCommand('/rutina2', 'Rutina 2 (Carro y Compresor) activada. Esperando a que termine...', 'Fallo al iniciar Rutina 2.');
     }
 
     function resetRoutine() {
@@ -275,6 +286,7 @@
     // Inicializa el estado al cargar la página
     window.onload = function() {
         updateStatus('Listo para operación. IP configurada: ' + ARDUINO_IP, true);
+        console.log("Asegúrate de que esta IP esté activa en tu red:", ARDUINO_IP);
     };
 </script>
 
