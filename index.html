@@ -7,7 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* Variables CSS para facilitar cambios de color */
+        /* ======================================= */
+        /* === CÓDIGO CSS (ESTILOS) === */
+        /* Los errores que veías antes estaban aquí. Estos no van en Arduino. */
+        /* ======================================= */
         :root {
             --primary-bg: linear-gradient(135deg, #0f0c29 0%, #302b63 100%);
             --secondary-bg: #1a1a2e;
@@ -21,7 +24,6 @@
             --shadow-light: rgba(0, 240, 255, 0.4);
         }
 
-        /* ESTILOS GENERALES Y LAYOUT BASE (MÓVIL) */
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
@@ -35,7 +37,6 @@
             padding: 20px;
         }
 
-        /* CONTENEDOR PRINCIPAL */
         .container {
             background-color: var(--secondary-bg);
             padding: 30px;
@@ -46,9 +47,8 @@
             border: 2px solid var(--accent-color-1); 
             text-align: center;
             
-            /* CSS Grid para organizar el contenido interno */
             display: grid;
-            grid-template-columns: 1fr; /* Columna única para móvil */
+            grid-template-columns: 1fr; 
             grid-template-areas:
                 "header"
                 "controls"
@@ -57,7 +57,6 @@
             gap: 25px; 
         }
         
-        /* CABECERA (H1) */
         h1 {
             grid-area: header;
             font-family: 'Orbitron', sans-serif;
@@ -68,7 +67,6 @@
             letter-spacing: 3px;
         }
 
-        /* ESTADO DEL ROBOT */
         #statusText {
             grid-area: status;
             padding: 15px;
@@ -82,7 +80,6 @@
             color: var(--accent-color-1); 
         }
 
-        /* CONTROLES (Botones) */
         .controls {
             grid-area: controls;
             display: flex;
@@ -109,8 +106,7 @@
             overflow: hidden; 
         }
         
-        /* Efectos de Hover/Active (Brillo y Presión) */
-        button::before { /* Efecto brillo */
+        button::before { 
             content: '';
             position: absolute;
             top: 0;
@@ -136,7 +132,6 @@
         #btnReset:active { transform: translateY(1px); box-shadow: 0 0 10px var(--button-red), 0 2px 0px rgba(0, 0, 0, 0.4); }
 
 
-        /* CONTENEDOR DE VIDEO */
         .video-wrapper {
             grid-area: video;
             width: 100%;
@@ -155,11 +150,9 @@
             display: block;
         }
 
-        /* RESPONSIVIDAD PARA DESKTOP */
         @media (min-width: 768px) {
             .container {
                 padding: 50px;
-                /* Diseño de dos columnas: Controles | Video */
                 grid-template-columns: 1fr 1.5fr; 
                 grid-template-areas:
                     "header header"
@@ -205,7 +198,7 @@
     <p id="statusText">Estado de Yarbito: Inicializando...</p>
 
     <div class="video-wrapper">
-        <!-- Usa un placeholder de video si el archivo 'video solid.mp4' no está disponible -->
+        <!-- Placeholder de video -->
         <video controls autoplay muted loop poster="https://placehold.co/650x366/302b63/00f0ff?text=FEED+DE+CÁMARA+DEL+ROBOT">
             <source src="video solid.mp4" type="video/mp4">
             Tu navegador no soporta la etiqueta de video.
@@ -215,10 +208,10 @@
 
 <script>
     // ****************************************************
-    // ** CÓDIGO JAVASCRIPT **
+    // ** CÓDIGO JAVASCRIPT (Lógica de comunicación) **
     // ****************************************************
     
-    // Configura la IP de tu Arduino/ESP32 con WiFi (MANTÉN ESTA IP ESTÁTICA)
+    // 🛑 CRÍTICO: Esta IP DEBE COINCIDIR con la que tu Arduino muestra en el Monitor Serial.
     const ARDUINO_IP = '172.16.1.113'; 
 
     // Función auxiliar para actualizar el texto de estado en la página
@@ -241,16 +234,12 @@
     /**
      * Función genérica para enviar comandos HTTP GET al Arduino.
      * @param {string} command El path del comando (ej: '/start', '/rutina2')
-     * @param {string} successMessage Mensaje a mostrar si el comando es exitoso.
-     * @param {string} failureMessage Mensaje a mostrar si el comando falla.
      */
     function sendCommand(command, successMessage, failureMessage) {
         updateStatus('Enviando comando ' + command.replace('/', '') + '...', true);
         
-        // *****************************************************************
-        // 🛑 CORRECCIÓN CLAVE: La URL ahora incluye la IP Y el comando.
+        // Construye la URL completa con la IP y el comando
         const url = 'http://' + ARDUINO_IP + command; 
-        // *****************************************************************
 
         fetch(url) 
             .then(response => {
@@ -268,7 +257,7 @@
     }
 
     // ****************************************************
-    // ** COMANDOS DE RUTINA **
+    // ** Mapeo de Comandos **
     // ****************************************************
     
     function startRoutine() {
