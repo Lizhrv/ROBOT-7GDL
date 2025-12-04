@@ -69,7 +69,7 @@
         }
 
         /* ESTADO DEL ROBOT */
-        #statusText {
+        #status {
             grid-area: status;
             padding: 15px;
             font-size: 1.2em;
