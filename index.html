@@ -6,85 +6,107 @@
     <title>Control System | Robot 7GDL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    
     <style>
+        /* --- AQUÍ ESTÁ TODO EL CSS (DISEÑO) --- */
         :root {
             --bg-main: #0b0f1a; --bg-card: #161b2a; --bg-input: #020617;
             --border-color: #2d3748; --text-primary: #f8fafc;
             --text-secondary: #94a3b8; --accent: #38bdf8;
             --success: #10b981; --danger: #ef4444;
         }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(--text-primary); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .dashboard { background: var(--bg-card); width: 100%; max-width: 1100px; border-radius: 12px; border: 1px solid var(--border-color); display: grid; grid-template-areas: "header header" "config config" "sidebar main" "footer footer"; grid-template-columns: 320px 1fr; overflow: hidden; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(--text-primary); min-height: 100vh; margin: 0; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .dashboard { background: var(--bg-card); width: 100%; max-width: 1100px; border-radius: 12px; border: 1px solid var(--border-color); display: grid; grid-template-areas: "header header" "config config" "sidebar main" "footer footer"; grid-template-columns: 320px 1fr; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
         header { grid-area: header; padding: 20px 30px; background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         header h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; }
         .config-bar { grid-area: config; padding: 12px 30px; background: var(--bg-input); border-bottom: 1px solid var(--border-color); font-family: 'JetBrains Mono'; font-size: 0.8rem; display: flex; align-items: center; gap: 10px; }
-        .config-bar input { background: #1e293b; border: 1px solid var(--border-color); color: var(--accent); padding: 4px 10px; border-radius: 4px; outline: none; }
+        .config-bar input { background: #1e293b; border: 1px solid var(--border-color); color: var(--accent); padding: 4px 10px; border-radius: 4px; outline: none; width: 160px; }
         .sidebar { grid-area: sidebar; padding: 25px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 20px; }
         .main-content { grid-area: main; padding: 25px; background: #0f172a; }
         .unity-viewport { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; }
         .btn { width: 100%; padding: 12px; border-radius: 6px; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: 0.2s; border: 1px solid transparent; font-size: 0.85rem; }
         .btn-primary { background: var(--accent); color: #000; }
+        .btn-primary:hover { background: #7dd3fc; }
         .btn-outline { border: 1px solid var(--border-color); color: var(--text-primary); background: transparent; }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); }
         .btn-danger { border: 1px solid #450a0a; color: var(--danger); background: rgba(239, 68, 68, 0.1); }
         footer { grid-area: footer; padding: 12px 30px; background: #020617; border-top: 1px solid var(--border-color); font-family: 'JetBrains Mono'; font-size: 0.75rem; display: flex; justify-content: space-between; }
         @media (max-width: 850px) { .dashboard { grid-template-areas: "header" "config" "main" "sidebar" "footer"; grid-template-columns: 1fr; } .sidebar { border-right: none; border-top: 1px solid var(--border-color); } }
     </style>
 </head>
 <body>
+
 <div class="dashboard">
     <header>
         <h1>Robot 7GDL <span style="font-weight: 300; color: var(--text-secondary);">Digital Twin</span></h1>
         <div id="status-indicator" style="width: 10px; height: 10px; background: var(--success); border-radius: 50%;"></div>
     </header>
+
     <div class="config-bar">
-        <span>IP_HOST:</span>
+        <span>GATEWAY_IP:</span>
         <input type="text" id="ipInput" value="10.49.105.124">
-        <span style="color: #475569;">| PORT: 80</span>
     </div>
+
     <aside class="sidebar">
         <div>
-            <span style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 700;">CONTROL FÍSICO</span>
+            <span style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 700;">OPERACIONES</span>
             <div class="mt-3 space-y-3">
-                <button class="btn btn-primary" onclick="sendCommand('/start', 'SERVOS_RUN')">Iniciar Servos</button>
-                <button class="btn btn-outline" onclick="sendCommand('/rutina2', 'SISTEMA_COMPR_OK')">Carro + Compresor</button>
+                <button class="btn btn-primary" onclick="sendCommand('/start', 'SERVOS_INIT')">Iniciar Servos</button>
+                <button class="btn btn-outline" onclick="sendCommand('/rutina2', 'CARRO_COMPRE_OK')">Carro + Compresor</button>
             </div>
         </div>
-        <button class="btn btn-danger mt-auto" onclick="sendCommand('/reset', 'SYS_RESET')">Reset Sistema</button>
+        <button class="btn btn-danger mt-auto" onclick="sendCommand('/reset', 'SYSTEM_RESET')">Reset Global</button>
     </aside>
+
     <main class="main-content">
-        <span style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 700; display: block; margin-bottom: 10px;">VISUALIZACIÓN UNITY 3D</span>
-        <div class="unity-viewport">
+        <span style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 700; display: block; margin-bottom: 10px;">VISUALIZACIÓN 3D (UNITY)</span>
+        <div class="unity-viewport" id="unityContainer">
             <p style="color: #334155; font-family: 'JetBrains Mono'; font-size: 0.7rem;">[ ESPERANDO CARGA DE UNITY WEBGL ]</p>
         </div>
     </main>
+
     <footer>
-        <div id="log">> SISTEMA_LISTO</div>
-        <div style="color: #475569;">V 2.0 - STABLE</div>
+        <div id="logText">> SISTEMA_LISTO</div>
+        <div style="color: #475569;">V 2.0 - PROFESSIONAL</div>
     </footer>
 </div>
+
 <script>
+    /* --- AQUÍ ESTÁ EL JAVASCRIPT (LÓGICA) --- */
     let isBusy = false;
-    function updateLog(msg, err = false) {
-        const l = document.getElementById('log');
-        l.innerText = `> ${msg}`;
-        l.style.color = err ? 'var(--danger)' : 'var(--text-secondary)';
+
+    function updateLog(msg, isErr = false) {
+        const log = document.getElementById('logText');
+        const ind = document.getElementById('status-indicator');
+        log.innerText = `> ${msg}`;
+        log.style.color = isErr ? 'var(--danger)' : 'var(--text-secondary)';
+        ind.style.background = isErr ? 'var(--danger)' : 'var(--success)';
     }
+
     async function sendCommand(path, okMsg) {
         if (isBusy) return;
-        const ip = document.getElementById('ipInput').value;
+        const ip = document.getElementById('ipInput').value.trim();
         isBusy = true;
         updateLog(`ENVIANDO_${path}...`);
+
         try {
-            const ctrl = new AbortController();
-            setTimeout(() => ctrl.abort(), 3000);
-            await fetch(`http://${ip}${path}`, { mode: 'no-cors', signal: ctrl.signal });
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 4000);
+            
+            // Usamos mode: 'no-cors' para que el Arduino no bloquee la petición
+            await fetch(`http://${ip}${path}`, { 
+                mode: 'no-cors', 
+                signal: controller.signal 
+            });
+            
             updateLog(`OK: ${okMsg}`);
         } catch (e) {
-            updateLog(`ERROR: HOST_${ip} NO RESPONDE`, true);
+            updateLog(`ERROR: HOST NO RESPONDE`, true);
         } finally {
             setTimeout(() => isBusy = false, 500);
         }
     }
 </script>
+
 </body>
 </html>
