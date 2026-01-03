@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yarbito Control Remoto</title>
+    <title>Robot 7GDL - Control Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-       
         :root {
             --primary-bg: linear-gradient(135deg, #0f0c29 0%, #302b63 100%);
             --secondary-bg: #1a1a2e;
-            --accent-color-1: #00f0ff; /* Azul neón */
-            --accent-color-2: #ff007f; /* Rosa neón */
-            --button-green: #39ff14; /* Verde neón */
-            --button-blue: #00bfff; /* Azul claro neón */
-            --button-red: #ff073a; /* Rojo neón */
+            --accent-color-1: #00f0ff;
+            --accent-color-2: #ff007f;
+            --button-green: #39ff14;
+            --button-blue: #00bfff;
+            --button-red: #ff073a;
             --text-light: #e0e0e0;
             --text-dark: #121212;
             --shadow-light: rgba(0, 240, 255, 0.4);
@@ -24,7 +23,6 @@
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
-            padding: 0;
             background: var(--primary-bg);
             color: var(--text-light);
             display: flex;
@@ -43,140 +41,71 @@
             max-width: 900px;
             border: 2px solid var(--accent-color-1); 
             text-align: center;
-            
             display: grid;
-            grid-template-columns: 1fr; 
             grid-template-areas:
                 "header"
+                "config"
                 "controls"
                 "status"
                 "video";
-            gap: 25px; 
-        }
-        
-        h1 {
-            grid-area: header;
-            font-family: 'Orbitron', sans-serif;
-            color: var(--accent-color-1);
-            font-size: 2.5em; 
-            margin-bottom: 5px;
-            text-shadow: 0 0 10px var(--accent-color-1), 0 0 20px var(--accent-color-1);
-            letter-spacing: 3px;
+            gap: 20px; 
         }
 
-        #statusText {
-            grid-area: status;
+        h1 { grid-area: header; font-family: 'Orbitron', sans-serif; color: var(--accent-color-1); font-size: 2.5rem; text-shadow: 0 0 10px var(--accent-color-1); letter-spacing: 3px; }
+
+        /* Estilo para el nuevo panel de configuración */
+        .config-panel {
+            grid-area: config;
+            background: rgba(0, 0, 0, 0.3);
             padding: 15px;
-            font-size: 1.2em;
-            font-weight: 700;
-            background-color: #0d0d1a; 
-            border: 1px solid var(--accent-color-2); 
-            border-radius: 8px;
-            box-shadow: 0 0 10px var(--accent-color-2);
-            transition: all 0.4s ease-in-out;
-            color: var(--accent-color-1); 
-        }
-
-        .controls {
-            grid-area: controls;
+            border-radius: 10px;
+            border: 1px dashed var(--accent-color-1);
             display: flex;
-            flex-direction: column; 
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
+
+        .config-panel input {
+            background: #0d0d1a;
+            border: 1px solid var(--accent-color-1);
+            color: var(--accent-color-1);
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+        }
+
+        .controls { grid-area: controls; display: flex; flex-direction: column; gap: 15px; align-items: center; }
+        #statusText { grid-area: status; padding: 15px; border-radius: 8px; border: 1px solid var(--accent-color-2); background: #0d0d1a; color: var(--accent-color-1); font-weight: bold; }
+        .video-wrapper { grid-area: video; border: 1px solid var(--accent-color-1); border-radius: 10px; overflow: hidden; }
         
         button {
-            padding: 18px 40px;
-            font-size: 1.2em;
+            padding: 15px 30px;
             font-family: 'Orbitron', sans-serif;
             font-weight: bold;
-            cursor: pointer;
-            border: none;
-            border-radius: 40px; 
-            transition: all 0.3s ease;
+            border-radius: 40px;
             width: 100%;
-            max-width: 300px; 
+            max-width: 350px;
+            transition: all 0.3s;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden; 
         }
+
+        #btnStart { background-color: var(--button-green); color: var(--text-dark); }
+        #btnRutina2 { background-color: var(--button-blue); color: var(--text-dark); }
+        #btnReset { background-color: var(--button-red); color: var(--text-light); }
         
-        button::before { 
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: all 0.5s;
-            transform: skewX(-20deg);
-        }
-        button:hover::before { left: 100%; }
-        
-        #btnStart { background-color: var(--button-green); color: var(--text-dark); box-shadow: 0 0 15px var(--button-green), 0 5px 0px rgba(0, 0, 0, 0.4); }
-        #btnStart:hover { background-color: #55ff33; transform: translateY(-2px); box-shadow: 0 0 25px var(--button-green), 0 8px 0px rgba(0, 0, 0, 0.6); }
-        #btnStart:active { transform: translateY(1px); box-shadow: 0 0 10px var(--button-green), 0 2px 0px rgba(0, 0, 0, 0.4); }
-
-        #btnRutina2 { background-color: var(--button-blue); color: var(--text-dark); box-shadow: 0 0 15px var(--button-blue), 0 5px 0px rgba(0, 0, 0, 0.4); }
-        #btnRutina2:hover { background-color: #33d0ff; transform: translateY(-2px); box-shadow: 0 0 25px var(--button-blue), 0 8px 0px rgba(0, 0, 0, 0.6); }
-        #btnRutina2:active { transform: translateY(1px); box-shadow: 0 0 10px var(--button-blue), 0 2px 0px rgba(0, 0, 0, 0.4); }
-
-        #btnReset { background-color: var(--button-red); color: var(--text-light); box-shadow: 0 0 15px var(--button-red), 0 5px 0px rgba(0, 0, 0, 0.4); }
-        #btnReset:hover { background-color: #ff3355; transform: translateY(-2px); box-shadow: 0 0 25px var(--button-red), 0 8px 0px rgba(0, 0, 0, 0.6); }
-        #btnReset:active { transform: translateY(1px); box-shadow: 0 0 10px var(--button-red), 0 2px 0px rgba(0, 0, 0, 0.4); }
-
-
-        .video-wrapper {
-            grid-area: video;
-            width: 100%;
-            max-width: 650px; 
-            margin-left: auto;
-            margin-right: auto;
-            border: 1px solid var(--accent-color-1); 
-            border-radius: 10px;
-            box-shadow: 0 0 20px var(--shadow-light); 
-            overflow: hidden; 
-        }
-
-        .video-wrapper video {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+        button:hover { transform: scale(1.02); filter: brightness(1.2); }
 
         @media (min-width: 768px) {
             .container {
-                padding: 50px;
-                grid-template-columns: 1fr 1.5fr; 
+                grid-template-columns: 1fr 1fr;
                 grid-template-areas:
                     "header header"
+                    "config config"
                     "controls video"
                     "status video";
-                gap: 30px 40px; 
-            }
-
-            h1 {
-                font-size: 4em;
-            }
-            
-            .controls {
-                flex-direction: column; 
-                align-items: stretch; 
-            }
-
-            button {
-                max-width: none; 
-                font-size: 1.3em;
-                padding: 20px 45px;
-            }
-            
-            #statusText {
-                font-size: 1.4em;
-                padding: 20px;
-                align-self: end; 
             }
         }
     </style>
@@ -184,107 +113,84 @@
 <body>
 
 <div class="container">
-    <h1>YARBITO</h1>
+    <h1>ROBOT 7 7GDL</h1>
     
-    <div class="controls">
-        <button id="btnStart" onclick="startRoutine()">INICIAR RUTINA 1 (Servos)</button>
-        <button id="btnRutina2" onclick="startRoutine2()">INICIAR RUTINA 2 (Carro + Compresor)</button>
-        <button id="btnReset" onclick="resetRoutine()">RESET / REPOSO</button>
+    <div class="config-panel">
+        <label for="ipInput">IP DEL ROBOT:</label>
+        <input type="text" id="ipInput" value="10.49.105.124" placeholder="Ej: 192.168.1.50">
+        <span style="font-size: 0.8rem; opacity: 0.7;">(Se actualiza al instante)</span>
     </div>
 
-    <p id="statusText">Estado de Yarbito: Inicializando...</p>
+    <div class="controls">
+        <button id="btnStart" onclick="startRoutine()">RUTINA 1 (Servos)</button>
+        <button id="btnRutina2" onclick="startRoutine2()">RUTINA 2 (Carro + Comp)</button>
+        <button id="btnReset" onclick="resetRoutine()">RESET</button>
+    </div>
+
+    <p id="statusText">Estado: Inicializando...</p>
 
     <div class="video-wrapper">
-        <video controls autoplay muted loop poster="https://placehold.co/650x366/302b63/00f0ff?text=FEED+DE+CÁMARA+DEL+ROBOT">
+        <video controls autoplay muted loop poster="https://placehold.co/650x366/302b63/00f0ff?text=FEED+DE+CÁMARA">
             <source src="video solid.mp4" type="video/mp4">
-            Tu navegador no soporta la etiqueta de video.
         </video>
     </div>
 </div>
 
 <script>
-    // ****************************************************
-    // ** CÓDIGO JAVASCRIPT (Lógica de comunicación) **
-    // ****************************************************
-    
-    // 🛑 CRÍTICO: ESTA IP DEBE COINCIDIR con la que tu Arduino muestra en el Monitor Serial.
-    const ARDUINO_IP = '10.49.105.124'; 
-    let isExecuting = false; // Bandera para prevenir spam de comandos
+    let isExecuting = false;
 
-    // Función auxiliar para actualizar el texto de estado en la página
+    // Función para obtener la IP actual del cuadro de texto
+    function getArduinoIP() {
+        return document.getElementById('ipInput').value.trim();
+    }
+
     function updateStatus(text, isSuccess) {
         const statusElement = document.getElementById('statusText');
         statusElement.innerText = 'Estado de Yarbito: ' + text;
-        
-        const successColor = 'var(--accent-color-1)';
-        const failureColor = 'var(--button-red)';
-
-        // Estilos para el efecto de neón en el estado
-        statusElement.style.color = isSuccess ? successColor : failureColor;
-        statusElement.style.boxShadow = '0 0 10px ' + (isSuccess ? successColor : failureColor);
-        statusElement.style.borderColor = isSuccess ? successColor : failureColor;
+        const color = isSuccess ? 'var(--accent-color-1)' : 'var(--button-red)';
+        statusElement.style.color = color;
+        statusElement.style.borderColor = color;
     }
 
-    /**
-     * Función genérica para enviar comandos HTTP GET al Arduino.
-     * @param {string} command El path del comando (ej: '/start', '/rutina2')
-     */
     async function sendCommand(command, successMessage, failureMessage) {
         if (isExecuting) {
-            updateStatus('Espera, ya hay un comando en proceso...', false);
+            updateStatus('Espera, comando en proceso...', false);
             return;
         }
 
-        updateStatus('Enviando comando ' + command.replace('/', '') + '...', true);
-        isExecuting = true; // Bloquea nuevos comandos
+        const currentIP = getArduinoIP();
+        updateStatus('Enviando a ' + currentIP + '...', true);
+        isExecuting = true; 
         
-        // Construye la URL completa con la IP y el comando
-        const url = 'http://' + ARDUINO_IP + command; 
+        const url = 'http://' + currentIP + command; 
 
         try {
-            const response = await fetch(url); 
+            // Timeout de 5 segundos para no esperar siempre
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+            const response = await fetch(url, { signal: controller.signal }); 
+            clearTimeout(timeoutId);
             
             if (response.ok) {
-                // Puedes leer el texto simple de respuesta del Arduino si quieres (opcional)
-                const arduinoResponse = await response.text();
-                console.log("Respuesta del Arduino:", arduinoResponse);
-                
                 updateStatus(successMessage, true);
             } else {
-                updateStatus(failureMessage + ' (Cód. HTTP: ' + response.status + ')', false);
+                updateStatus(failureMessage + ' (Error ' + response.status + ')', false);
             }
         } catch (error) {
-            // Muestra la IP completa y el error de red
-            updateStatus('ERROR: No se pudo conectar a ' + ARDUINO_IP + '. Verifique la IP y la red.', false);
-            console.error('Error de conexión:', error); 
+            updateStatus('ERROR: No hay conexión con ' + currentIP, false);
+            console.error('Error:', error); 
         } finally {
-            // Desbloquea la ejecución después de un breve retraso para evitar doble clic rápido.
-            setTimeout(() => {
-                isExecuting = false;
-            }, 500); 
+            setTimeout(() => { isExecuting = false; }, 500); 
         }
     }
 
-    // ****************************************************
-    // ** Mapeo de Comandos **
-    // ****************************************************
-    
-    function startRoutine() {
-        sendCommand('/start', 'Rutina 1 (Movimiento de Servos) activada.', 'Fallo al iniciar Rutina 1.');
-    }
+    function startRoutine() { sendCommand('/start', 'Rutina 1 activa.', 'Fallo Rutina 1.'); }
+    function startRoutine2() { sendCommand('/rutina2', 'Rutina 2 activa.', 'Fallo Rutina 2.'); }
+    function resetRoutine() { sendCommand('/reset', 'Sistema en reposo.', 'Fallo Reset.'); }
 
-    function startRoutine2() {
-        sendCommand('/rutina2', 'Rutina 2 (Carro y Compresor) activada. Esperando a que termine...', 'Fallo al iniciar Rutina 2.');
-    }
-
-    function resetRoutine() {
-        sendCommand('/reset', 'Yarbito restablecido y en reposo.', 'Fallo al ejecutar RESET.');
-    }
-
-    // Inicializa el estado al cargar la página
     window.onload = function() {
-        updateStatus('Listo para operación. IP configurada: ' + ARDUINO_IP, true);
-        console.log("Asegúrate de que esta IP esté activa en tu red:", ARDUINO_IP);
+        updateStatus('Listo. IP actual: ' + getArduinoIP(), true);
     };
 </script>
 
