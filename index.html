@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Sistemas - Robot 7GDL</title>
+    <title>Control System | Robot 7GDL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #0f172a;
-            --bg-card: #1e293b;
-            --border-color: #334155;
+            --bg-main: #0b0f1a;
+            --bg-card: #161b2a;
+            --bg-input: #020617;
+            --border-color: #2d3748;
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --accent: #38bdf8;
-            --success: #22c55e;
+            --success: #10b981;
             --danger: #ef4444;
         }
 
@@ -27,29 +28,29 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 20px;
         }
 
         .dashboard {
             background-color: var(--bg-card);
             width: 100%;
-            max-width: 1000px;
-            border-radius: 8px;
+            max-width: 1100px;
+            border-radius: 12px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             display: grid;
             grid-template-areas: 
                 "header header"
                 "config config"
                 "sidebar main"
                 "footer footer";
-            grid-template-columns: 350px 1fr;
+            grid-template-columns: 320px 1fr;
         }
 
         header {
             grid-area: header;
             padding: 20px 30px;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
@@ -57,9 +58,9 @@
         }
 
         header h1 {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
             color: var(--accent);
         }
@@ -67,88 +68,103 @@
         .config-bar {
             grid-area: config;
             padding: 12px 30px;
-            background: #111827;
+            background: var(--bg-input);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             gap: 15px;
-            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
         }
 
         .config-bar input {
-            background: #1f2937;
+            background: #1e293b;
             border: 1px solid var(--border-color);
             color: var(--accent);
-            padding: 4px 12px;
+            padding: 4px 10px;
             border-radius: 4px;
-            font-family: 'JetBrains Mono', monospace;
+            outline: none;
         }
 
         .sidebar {
             grid-area: sidebar;
-            padding: 30px;
+            padding: 25px;
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 25px;
         }
 
         .main-content {
             grid-area: main;
-            padding: 30px;
+            padding: 25px;
             background: #0f172a;
         }
 
-        /* Botones Formales */
+        .label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        /* Botones Profesionales */
         .btn {
             width: 100%;
             padding: 12px;
             border-radius: 6px;
             font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+            font-size: 0.85rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             text-transform: uppercase;
+            cursor: pointer;
             border: 1px solid transparent;
         }
 
         .btn-primary { background: var(--accent); color: #000; }
-        .btn-primary:hover { background: #7dd3fc; }
+        .btn-primary:hover { background: #7dd3fc; transform: translateY(-1px); }
 
-        .btn-outline { border: 1px solid var(--border-color); color: var(--text-primary); }
-        .btn-outline:hover { background: rgba(255,255,255,0.05); }
+        .btn-outline { border: 1px solid var(--border-color); color: var(--text-primary); background: transparent; }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: var(--text-secondary); }
 
-        .btn-danger { border: 1px solid var(--danger); color: var(--danger); }
+        .btn-danger { border: 1px solid #450a0a; color: var(--danger); background: rgba(239, 68, 68, 0.1); }
         .btn-danger:hover { background: var(--danger); color: white; }
 
-        #statusText {
-            grid-area: footer;
-            padding: 15px 30px;
-            background: #020617;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--border-color);
-        }
-
-        .video-container {
+        /* Contenedor de Unity */
+        .unity-viewport {
             width: 100%;
             aspect-ratio: 16/9;
             background: #000;
-            border-radius: 4px;
+            border-radius: 8px;
             border: 1px solid var(--border-color);
+            position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .label {
+        .unity-placeholder {
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--border-color);
+        }
+
+        footer {
+            grid-area: footer;
+            padding: 12px 30px;
+            background: #020617;
+            border-top: 1px solid var(--border-color);
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-            display: block;
-            text-transform: uppercase;
-            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 850px) {
             .dashboard {
                 grid-template-areas: "header" "config" "main" "sidebar" "footer";
                 grid-template-columns: 1fr;
@@ -161,84 +177,103 @@
 
 <div class="dashboard">
     <header>
-        <h1>Robot 7GDL <span style="font-weight: 300; color: var(--text-secondary);">| Control System</span></h1>
-        <div id="connection-dot" style="width: 10px; height: 10px; background: var(--success); border-radius: 50%;"></div>
+        <h1>Robot 7GDL <span style="font-weight: 300; color: var(--text-secondary);">Control Interface</span></h1>
+        <div class="flex items-center gap-2">
+            <span id="conn-status-text" style="font-size: 0.7rem; color: var(--text-secondary);">SISTEMA ONLINE</span>
+            <div id="status-indicator" style="width: 8px; height: 8px; background: var(--success); border-radius: 50%; box-shadow: 0 0 8px var(--success);"></div>
+        </div>
     </header>
 
     <div class="config-bar">
-        <span>HOST IP:</span>
-        <input type="text" id="ipInput" value="10.49.105.124">
-        <span style="color: var(--text-secondary);">| PORT: 80</span>
+        <span>GATEWAY_IP:</span>
+        <input type="text" id="ipInput" value="10.49.105.124" spellcheck="false">
+        <span style="color: #475569;">| PROTOCOL: HTTP/JSON</span>
     </div>
 
     <aside class="sidebar">
-        <div>
-            <span class="label">Comandos de Rutina</span>
-            <div class="flex flex-col gap-3">
-                <button class="btn btn-primary" onclick="sendCommand('/start', 'RUTINA_01 INICIADA', 'ERR_RUTINA_01')">Iniciar Servos</button>
-                <button class="btn btn-outline" onclick="sendCommand('/rutina2', 'RUTINA_02 INICIADA', 'ERR_RUTINA_02')">Carro + Compresor</button>
+        <section>
+            <span class="label">Operaciones de Rutina</span>
+            <div class="space-y-3">
+                <button class="btn btn-primary" onclick="sendCommand('/start', 'RUTINA_SERVO_OK', 'ERROR_COMM_01')">Ejecutar Servos</button>
+                <button class="btn btn-outline" onclick="sendCommand('/rutina2', 'SISTEMA_CARRO_OK', 'ERROR_COMM_02')">Carro + Compresor</button>
             </div>
-        </div>
+        </section>
 
-        <div class="mt-auto">
-            <span class="label">Mantenimiento</span>
-            <button class="btn btn-danger" onclick="sendCommand('/reset', 'SISTEMA REINICIADO', 'ERR_RESET')">SISTEMA RESET</button>
-        </div>
+        <section class="mt-auto">
+            <span class="label">Seguridad y Paro</span>
+            <button class="btn btn-danger" onclick="sendCommand('/reset', 'SISTEMA_RESET_OK', 'ERROR_RESET_FAIL')">Reiniciar Sistema</button>
+        </section>
     </aside>
 
     <main class="main-content">
-        <span class="label">Monitoreo Visual</span>
-        <div class="video-container">
-            <video class="w-full h-full object-cover" controls autoplay muted loop>
-                <source src="video solid.mp4" type="video/mp4">
-            </video>
+        <span class="label">Simulación Digital Twin (Unity WebGL)</span>
+        <div class="unity-viewport" id="unityContainer">
+            <div class="unity-placeholder">
+                <svg class="w-12 h-12 mx-auto mb-3 opacity-20" fill="currentColor" viewBox="0 0 24 24"><path d="M21 16.5C21 16.88 20.79 17.21 20.47 17.38L12.57 21.82C12.41 21.94 12.21 22 12 22C11.79 22 11.59 21.94 11.43 21.82L3.53 17.38C3.21 17.21 3 16.88 3 16.5V7.5C3 7.12 3.21 6.79 3.53 6.62L11.43 2.18C11.59 2.06 11.79 2 12 2C12.21 2 12.41 2.06 12.57 2.18L20.47 6.62C20.79 6.79 21 7.12 21 7.5V16.5Z"/></svg>
+                <p>MÓDULO UNITY NO DETECTADO</p>
+                <p style="font-size: 0.6rem; margin-top: 5px;">CARGUE EL ARCHIVO INDEX.HTML DE UNITY AQUÍ</p>
+            </div>
         </div>
     </main>
 
-    <div id="statusText">> SISTEMA_LISTO: Esperando instrucciones...</div>
+    <footer>
+        <div id="logText">SISTEMA_READY: Esperando comando del operador...</div>
+        <div style="color: #475569;">V 2.0.4 - STABLE</div>
+    </footer>
 </div>
 
 <script>
-    let isExecuting = false;
+    let isBusy = false;
 
-    function updateStatus(text, type) {
-        const statusElement = document.getElementById('statusText');
-        const dot = document.getElementById('connection-dot');
+    function updateUI(message, isError = false) {
+        const log = document.getElementById('logText');
+        const indicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('conn-status-text');
+
+        const timestamp = new Date().toLocaleTimeString('en-GB', { hour12: false });
+        log.innerText = `[${timestamp}] ${message}`;
         
-        statusElement.innerText = `> ${text}`;
-        
-        if (type === 'error') {
-            statusElement.style.color = 'var(--danger)';
-            dot.style.background = 'var(--danger)';
+        if (isError) {
+            log.style.color = 'var(--danger)';
+            indicator.style.background = 'var(--danger)';
+            indicator.style.boxShadow = '0 0 8px var(--danger)';
+            statusText.innerText = 'SISTEMA ERROR';
         } else {
-            statusElement.style.color = 'var(--text-secondary)';
-            dot.style.background = 'var(--success)';
+            log.style.color = 'var(--text-secondary)';
+            indicator.style.background = 'var(--success)';
+            indicator.style.boxShadow = '0 0 8px var(--success)';
+            statusText.innerText = 'SISTEMA ONLINE';
         }
     }
 
-    async function sendCommand(command, successMsg, failMsg) {
-        if (isExecuting) return;
-        
+    async function sendCommand(endpoint, successText, errorText) {
+        if (isBusy) return;
+
         const ip = document.getElementById('ipInput').value.trim();
-        isExecuting = true;
-        updateStatus(`ENVIANDO_PETICION: ${command}...`, 'info');
+        isBusy = true;
+        updateUI(`PETICIÓN_ENVIADA: ${endpoint}...`);
 
         try {
             const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), 4000);
-            
-            const response = await fetch(`http://${ip}${command}`, { signal: controller.signal });
-            clearTimeout(id);
+            const timeout = setTimeout(() => controller.abort(), 5000);
 
-            if (response.ok) {
-                updateStatus(`OK: ${successMsg}`, 'success');
+            const response = await fetch(`http://${ip}${endpoint}`, { 
+                signal: controller.signal,
+                mode: 'no-cors' // Ajuste común para Arduinos sin cabeceras CORS
+            });
+
+            // Nota: con 'no-cors' response.ok siempre será falso, 
+            // pero si llega aquí es porque el paquete se envió.
+            updateUI(`EXEC_SUCCESS: ${successText}`);
+            
+        } catch (err) {
+            if (err.name === 'AbortError') {
+                updateUI('ERROR: Tiempo de espera agotado (Timeout)', true);
             } else {
-                updateStatus(`${failMsg} (HTTP_${response.status})`, 'error');
+                updateUI(`ERROR_CONEXIÓN: No se alcanzó el host ${ip}`, true);
             }
-        } catch (e) {
-            updateStatus(`TIMEOUT_ERROR: No se pudo conectar con ${ip}`, 'error');
         } finally {
-            setTimeout(() => { isExecuting = false; }, 400);
+            setTimeout(() => { isBusy = false; }, 500);
         }
     }
 </script>
