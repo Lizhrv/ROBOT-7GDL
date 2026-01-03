@@ -8,249 +8,81 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #0b0f1a;
-            --bg-card: #161b2a;
-            --bg-input: #020617;
-            --border-color: #2d3748;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent: #38bdf8;
-            --success: #10b981;
-            --danger: #ef4444;
+            --bg-main: #0b0f1a; --bg-card: #161b2a; --bg-input: #020617;
+            --border-color: #2d3748; --text-primary: #f8fafc;
+            --text-secondary: #94a3b8; --accent: #38bdf8;
+            --success: #10b981; --danger: #ef4444;
         }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-main);
-            color: var(--text-primary);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .dashboard {
-            background-color: var(--bg-card);
-            width: 100%;
-            max-width: 1100px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            display: grid;
-            grid-template-areas: 
-                "header header"
-                "config config"
-                "sidebar main"
-                "footer footer";
-            grid-template-columns: 320px 1fr;
-        }
-
-        header {
-            grid-area: header;
-            padding: 20px 30px;
-            background: rgba(255, 255, 255, 0.02);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        header h1 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--accent);
-        }
-
-        .config-bar {
-            grid-area: config;
-            padding: 12px 30px;
-            background: var(--bg-input);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-        }
-
-        .config-bar input {
-            background: #1e293b;
-            border: 1px solid var(--border-color);
-            color: var(--accent);
-            padding: 4px 10px;
-            border-radius: 4px;
-            outline: none;
-        }
-
-        .sidebar {
-            grid-area: sidebar;
-            padding: 25px;
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .main-content {
-            grid-area: main;
-            padding: 25px;
-            background: #0f172a;
-        }
-
-        .label {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            display: block;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            text-transform: uppercase;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-
+        body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(--text-primary); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .dashboard { background: var(--bg-card); width: 100%; max-width: 1100px; border-radius: 12px; border: 1px solid var(--border-color); display: grid; grid-template-areas: "header header" "config config" "sidebar main" "footer footer"; grid-template-columns: 320px 1fr; overflow: hidden; }
+        header { grid-area: header; padding: 20px 30px; background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        header h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; }
+        .config-bar { grid-area: config; padding: 12px 30px; background: var(--bg-input); border-bottom: 1px solid var(--border-color); font-family: 'JetBrains Mono'; font-size: 0.8rem; display: flex; align-items: center; gap: 10px; }
+        .config-bar input { background: #1e293b; border: 1px solid var(--border-color); color: var(--accent); padding: 4px 10px; border-radius: 4px; outline: none; }
+        .sidebar { grid-area: sidebar; padding: 25px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 20px; }
+        .main-content { grid-area: main; padding: 25px; background: #0f172a; }
+        .unity-viewport { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; }
+        .btn { width: 100%; padding: 12px; border-radius: 6px; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: 0.2s; border: 1px solid transparent; font-size: 0.85rem; }
         .btn-primary { background: var(--accent); color: #000; }
-        .btn-primary:hover { background: #7dd3fc; transform: translateY(-1px); }
-
         .btn-outline { border: 1px solid var(--border-color); color: var(--text-primary); background: transparent; }
-        .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: var(--text-secondary); }
-
         .btn-danger { border: 1px solid #450a0a; color: var(--danger); background: rgba(239, 68, 68, 0.1); }
-        .btn-danger:hover { background: var(--danger); color: white; }
-
-        .unity-viewport {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: #000;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .unity-placeholder {
-            text-align: center;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--text-secondary);
-            opacity: 0.4;
-        }
-
-        footer {
-            grid-area: footer;
-            padding: 12px 30px;
-            background: #020617;
-            border-top: 1px solid var(--border-color);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        @media (max-width: 850px) {
-            .dashboard {
-                grid-template-areas: "header" "config" "main" "sidebar" "footer";
-                grid-template-columns: 1fr;
-            }
-            .sidebar { border-right: none; border-top: 1px solid var(--border-color); }
-        }
+        footer { grid-area: footer; padding: 12px 30px; background: #020617; border-top: 1px solid var(--border-color); font-family: 'JetBrains Mono'; font-size: 0.75rem; display: flex; justify-content: space-between; }
+        @media (max-width: 850px) { .dashboard { grid-template-areas: "header" "config" "main" "sidebar" "footer"; grid-template-columns: 1fr; } .sidebar { border-right: none; border-top: 1px solid var(--border-color); } }
     </style>
 </head>
 <body>
-
 <div class="dashboard">
     <header>
-        <h1>Robot 7GDL <span style="font-weight: 300; color: var(--text-secondary);">Control Interface</span></h1>
-        <div class="flex items-center gap-2">
-            <span id="conn-status-text" style="font-size: 0.7rem; color: var(--text-secondary);">SISTEMA ONLINE</span>
-            <div id="status-indicator" style="width: 8px; height: 8px; background: var(--success); border-radius: 50%;"></div>
-        </div>
+        <h1>Robot 7GDL <span style="font-weight: 300; color: var(--text-secondary);">Digital Twin</span></h1>
+        <div id="status-indicator" style="width: 10px; height: 10px; background: var(--success); border-radius: 50%;"></div>
     </header>
-
     <div class="config-bar">
-        <span>GATEWAY_IP:</span>
-        <input type="text" id="ipInput" value="10.49.105.124" spellcheck="false">
-        <span style="color: #475569;">| PROTOCOL: HTTP/JSON</span>
+        <span>IP_HOST:</span>
+        <input type="text" id="ipInput" value="10.49.105.124">
+        <span style="color: #475569;">| PORT: 80</span>
     </div>
-
     <aside class="sidebar">
-        <section>
-            <span class="label">Operaciones de Rutina</span>
-            <div class="space-y-3">
-                <button class="btn btn-primary" onclick="sendCommand('/start', 'RUTINA_SERVO_OK')">Ejecutar Servos</button>
-                <button class="btn btn-outline" onclick="sendCommand('/rutina2', 'SISTEMA_CARRO_OK')">Carro + Compresor</button>
+        <div>
+            <span style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 700;">CONTROL FÍSICO</span>
+            <div class="mt-3 space-y-3">
+                <button class="btn btn-primary" onclick="sendCommand('/start', 'SERVOS_RUN')">Iniciar Servos</button>
+                <button class="btn btn-outline" onclick="sendCommand('/rutina2', 'SISTEMA_COMPR_OK')">Carro + Compresor</button>
             </div>
-        </section>
-
-        <section class="mt-auto">
-            <span class="label">Seguridad y Paro</span>
-            <button class="btn btn-danger" onclick="sendCommand('/reset', 'SISTEMA_RESET_OK')">Reiniciar Sistema</button>
-        </section>
+        </div>
+        <button class="btn btn-danger mt-auto" onclick="sendCommand('/reset', 'SYS_RESET')">Reset Sistema</button>
     </aside>
-
     <main class="main-content">
-        <span class="label">Simulación Digital Twin (Unity WebGL)</span>
-        <div class="unity-viewport" id="unityContainer">
-            <div class="unity-placeholder">
-                <p>[ ESPACIO RESERVADO PARA UNITY WebGL ]</p>
-                <p style="font-size: 0.6rem; margin-top: 5px;">CONTENEDOR 16:9 LISTO</p>
-            </div>
+        <span style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 700; display: block; margin-bottom: 10px;">VISUALIZACIÓN UNITY 3D</span>
+        <div class="unity-viewport">
+            <p style="color: #334155; font-family: 'JetBrains Mono'; font-size: 0.7rem;">[ ESPERANDO CARGA DE UNITY WEBGL ]</p>
         </div>
     </main>
-
     <footer>
-        <div id="logText">SISTEMA_READY: Esperando comando...</div>
-        <div style="color: #475569;">V 2.0.4 - STABLE</div>
+        <div id="log">> SISTEMA_LISTO</div>
+        <div style="color: #475569;">V 2.0 - STABLE</div>
     </footer>
 </div>
-
 <script>
     let isBusy = false;
-
-    function updateUI(message, isError = false) {
-        const log = document.getElementById('logText');
-        const indicator = document.getElementById('status-indicator');
-        const timestamp = new Date().toLocaleTimeString('en-GB', { hour12: false });
-        
-        log.innerText = `[${timestamp}] ${message}`;
-        log.style.color = isError ? 'var(--danger)' : 'var(--text-secondary)';
-        indicator.style.background = isError ? 'var(--danger)' : 'var(--success)';
+    function updateLog(msg, err = false) {
+        const l = document.getElementById('log');
+        l.innerText = `> ${msg}`;
+        l.style.color = err ? 'var(--danger)' : 'var(--text-secondary)';
     }
-
-    async function sendCommand(endpoint, successText) {
+    async function sendCommand(path, okMsg) {
         if (isBusy) return;
-        const ip = document.getElementById('ipInput').value.trim();
+        const ip = document.getElementById('ipInput').value;
         isBusy = true;
-        updateUI(`ENVIANDO: ${endpoint}...`);
-
+        updateLog(`ENVIANDO_${path}...`);
         try {
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 4000);
-            
-            // Usamos 'no-cors' para evitar bloqueos del navegador con el Arduino
-            await fetch(`http://${ip}${endpoint}`, { mode: 'no-cors', signal: controller.signal });
-            
-            updateUI(`ÉXITO: ${successText}`);
-        } catch (err) {
-            updateUI(`ERROR: No se pudo alcanzar a ${ip}`, true);
+            const ctrl = new AbortController();
+            setTimeout(() => ctrl.abort(), 3000);
+            await fetch(`http://${ip}${path}`, { mode: 'no-cors', signal: ctrl.signal });
+            updateLog(`OK: ${okMsg}`);
+        } catch (e) {
+            updateLog(`ERROR: HOST_${ip} NO RESPONDE`, true);
         } finally {
-            setTimeout(() => { isBusy = false; }, 500);
+            setTimeout(() => isBusy = false, 500);
         }
     }
 </script>
