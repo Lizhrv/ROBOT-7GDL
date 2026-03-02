@@ -1,13 +1,11 @@
 #include <WiFiS3.h> 
 #include <Servo.h> 
 
-// ****************************************************
-// === 1. CONFIGURACIÓN INICIAL ===
-// ****************************************************
+
 
 // --- RED WIFI ---
-char ssid[] = "COMPUTACION E4";     // Nombre de tu red WiFi
-char pass[] = "C0MPUT4C10N%16";       // Contraseña de tu red WiFi
+char ssid[] = "Totalplay-2.4G-0338";     // Nombre de la red WiFi
+char pass[] = "JWyK3SFzKdhBChR8";       // Contraseña de la  red WiFi
 int status = WL_IDLE_STATUS;        
 WiFiServer server(80);
 volatile bool rutinaActiva = false; // Bandera para Rutina 1
