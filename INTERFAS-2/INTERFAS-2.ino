@@ -1,59 +1,114 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Control de Robot - Arduino R4</title>
-    <style>
-        /* Tu CSS actual se mantiene igual */
-        body { font-family: sans-serif; background: #1a1a1a; color: white; text-align: center; }
-        .dashboard { max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 12px; background: #2d2d2d; }
-        button { padding: 15px 30px; margin: 10px; font-size: 18px; cursor: pointer; border-radius: 8px; border: none; }
-        .btn-start { background: #2ecc71; color: white; }
-        .btn-rutina2 { background: #3498db; color: white; }
-        .btn-reset { background: #e74c3c; color: white; }
-        input { padding: 10px; border-radius: 5px; border: 1px solid #444; background: #333; color: #00ff00; text-align: center; }
-    </style>
-</head>
-<body>
+#include <WiFiS3.h> 
+#include <Servo.h> 
 
-    <div class="dashboard">
-        <h2>Panel de Control Robot</h2>
-        
-        <div class="config-bar">
-            <span>IP DEL ROBOT:</span>
-            <input type="text" id="ipInput" value="192.168.100.50">
-        </div>
+// CONFIGURACIÓN DE RED WIFI
+char ssid[] = "iPhone Liz";       
+char pass[] = "lizlizliz";    
+int status = WL_IDLE_STATUS;       
 
-        <hr>
+WiFiServer server(80);
+volatile bool rutinaActiva = false; 
 
-        <button class="btn-start" onclick="enviarComando('start')">EJECUTAR RUTINA 1</button>
-        <button class="btn-rutina2" onclick="enviarComando('rutina2')">EJECUTAR RUTINA 2</button>
-        <button class="btn-reset" onclick="enviarComando('reset')">PARADA DE EMERGENCIA</button>
+// CONFIGURACIÓN DEL ROBOT
+const int NUM_SERVOS = 7;
+const int servoPins[NUM_SERVOS] = {2, 3, 4, 5, 6, 7, 8};
+Servo myservo[NUM_SERVOS]; 
 
-        <div id="status" style="margin-top: 20px; color: #888;">Listo para conectar...</div>
-    </div>
+// --- PIN DEL COMPRESOR ---
+const int PIN_COMPRESOR = A2; 
 
-    <script>
-        function enviarComando(ruta) {
-            const ip = document.getElementById('ipInput').value;
-            const statusDiv = document.getElementById('status');
-            const url = `http://${ip}/${ruta}`;
+void configurarPosicionReposo() {
+    digitalWrite(PIN_COMPRESOR, HIGH); // Mantiene compresor APAGADO
+    myservo[0].write(90);  
+    myservo[1].write(160); 
+    myservo[2].write(90);  
+    myservo[3].write(90);  
+    myservo[4].write(90);  
+    myservo[5].write(90);  
+    myservo[6].write(40);  
+    delay(1000); 
+    Serial.println("Robot en reposo y compresores OFF.");
+}
 
-            statusDiv.innerText = `Enviando a ${url}...`;
-            statusDiv.style.color = "#f1c40f";
+void ejecutarRutina() {
+    Serial.println("Ejecutando secuencia...");
+    
+    // Ejemplo: Prender compresor al iniciar
+    digitalWrite(PIN_COMPRESOR, LOW); // ON
+    
+    myservo[0].write(20); delay(1000); 
+    if (!rutinaActiva) return;
+    myservo[0].write(160); delay(1000); 
+    
+    // Ejemplo: Apagar compresor al final
+    digitalWrite(PIN_COMPRESOR, HIGH); // OFF
+    
+    Serial.println("Secuencia completada.");
+    configurarPosicionReposo(); 
+    rutinaActiva = false; 
+}
 
-            // Usamos mode: 'no-cors' para evitar bloqueos del navegador
-            fetch(url, { mode: 'no-cors' })
-                .then(() => {
-                    statusDiv.innerText = "Comando enviado con éxito";
-                    statusDiv.style.color = "#2ecc71";
-                })
-                .catch(err => {
-                    statusDiv.innerText = "Error: Verifica la conexión";
-                    statusDiv.style.color = "#e74c3c";
-                    console.error("Error de red:", err);
-                });
+void setup() {
+    // IMPORTANTE: Apagar antes de declarar salida para que no den el "chispazo"
+    digitalWrite(PIN_COMPRESOR, HIGH); 
+    pinMode(PIN_COMPRESOR, OUTPUT);
+
+    Serial.begin(9600);
+    
+    for (int i = 0; i < NUM_SERVOS; i++) {
+        myservo[i].attach(servoPins[i]); 
+    }
+    configurarPosicionReposo(); 
+    
+    while (status != WL_CONNECTED) {
+        Serial.print("Conectando a: ");
+        Serial.println(ssid);
+        status = WiFi.begin(ssid, pass);
+        delay(10000); 
+    }
+
+    Serial.println("¡Conectado!");
+    Serial.print("IP: ");
+    Serial.println(WiFi.localIP()); 
+    server.begin();
+}
+
+void loop() {
+    if (rutinaActiva) {
+        ejecutarRutina(); 
+    }
+    
+    WiFiClient client = server.available(); 
+    if (client) {
+        String currentLine = "";
+        while (client.connected()) {
+            if (client.available()) {
+                char c = client.read();
+                if (c == '\n') {
+                    if (currentLine.length() == 0) {
+                        // RESPUESTA HTTP con permiso para la web (CORS)
+                        client.println("HTTP/1.1 200 OK");
+                        client.println("Content-Type: text/html");
+                        client.println("Access-Control-Allow-Origin: *"); // ESTO ACTIVA TU INTERFAZ
+                        client.println("Connection: close");
+                        client.println();
+                        client.println("OK");
+                        
+                        if (currentLine.indexOf("GET /start") != -1) {
+                            rutinaActiva = true; 
+                        } else if (currentLine.indexOf("GET /reset") != -1) {
+                            rutinaActiva = false;
+                            configurarPosicionReposo(); 
+                        }
+                        break; 
+                    } else {
+                        currentLine = "";
+                    }
+                } else if (c != '\r') {
+                    currentLine += c; 
+                }
+            }
         }
-    </script>
-</body>
-</html>
+        client.stop(); 
+    }
+}
