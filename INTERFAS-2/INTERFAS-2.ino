@@ -1,162 +1,59 @@
-#include <WiFiS3.h> 
-#include <Servo.h> 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Control de Robot - Arduino R4</title>
+    <style>
+        /* Tu CSS actual se mantiene igual */
+        body { font-family: sans-serif; background: #1a1a1a; color: white; text-align: center; }
+        .dashboard { max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 12px; background: #2d2d2d; }
+        button { padding: 15px 30px; margin: 10px; font-size: 18px; cursor: pointer; border-radius: 8px; border: none; }
+        .btn-start { background: #2ecc71; color: white; }
+        .btn-rutina2 { background: #3498db; color: white; }
+        .btn-reset { background: #e74c3c; color: white; }
+        input { padding: 10px; border-radius: 5px; border: 1px solid #444; background: #333; color: #00ff00; text-align: center; }
+    </style>
+</head>
+<body>
 
-// ****************************************************
-// === 1. CONFIGURACIÓN INICIAL ===
-// ****************************************************
+    <div class="dashboard">
+        <h2>Panel de Control Robot</h2>
+        
+        <div class="config-bar">
+            <span>IP DEL ROBOT:</span>
+            <input type="text" id="ipInput" value="192.168.100.50">
+        </div>
 
-// --- RED WIFI ---
-char ssid[] = "Totalplay-2.4G-0338";
-char pass[] = "JWyK3SFzKdhBChR8";
-int status = WL_IDLE_STATUS;
-WiFiServer server(80);
-volatile bool rutinaActiva = false;
-int tipoRutina = 0; // 1 para Rutina 1, 2 para Rutina 2
+        <hr>
 
-// --- SERVOS DEL BRAZO (D2-D8) ---
-const int NUM_SERVOS = 7;
-const int servoPins[NUM_SERVOS] = {2, 3, 4, 5, 6, 7, 8};
-Servo myservo[NUM_SERVOS]; 
+        <button class="btn-start" onclick="enviarComando('start')">EJECUTAR RUTINA 1</button>
+        <button class="btn-rutina2" onclick="enviarComando('rutina2')">EJECUTAR RUTINA 2</button>
+        <button class="btn-reset" onclick="enviarComando('reset')">PARADA DE EMERGENCIA</button>
 
-// --- COMPRESOR (AHORA EN A2) ---
-const int PIN_COMPRESOR = A2; // Pin analógico 2 usado como digital
+        <div id="status" style="margin-top: 20px; color: #888;">Listo para conectar...</div>
+    </div>
 
-// --- CARRO (D10-D13) ---
-const int IZQ_IN1 = 10; const int IZQ_IN2 = 11; 
-const int DER_IN3 = 12; const int DER_IN4 = 13; 
+    <script>
+        function enviarComando(ruta) {
+            const ip = document.getElementById('ipInput').value;
+            const statusDiv = document.getElementById('status');
+            const url = `http://${ip}/${ruta}`;
 
-// ****************************************************
-// === 2. FUNCIONES DE MOVIMIENTO ===
-// ****************************************************
+            statusDiv.innerText = `Enviando a ${url}...`;
+            statusDiv.style.color = "#f1c40f";
 
-void moverSuave(int index, int anguloFinal) {
-  if (!myservo[index].attached()) myservo[index].attach(servoPins[index]);
-  int angActual = myservo[index].read();
-  int paso = (angActual < anguloFinal) ? 1 : -1;
-  while (angActual != anguloFinal) {
-    angActual += paso;
-    myservo[index].write(angActual);
-    delay(15);
-  }
-}
-
-void detenerCarro() {
-  digitalWrite(IZQ_IN1, LOW); digitalWrite(IZQ_IN2, LOW);
-  digitalWrite(DER_IN3, LOW); digitalWrite(DER_IN4, LOW);
-}
-
-void moverAdelante() {
-  digitalWrite(IZQ_IN1, HIGH); digitalWrite(IZQ_IN2, LOW);
-  digitalWrite(DER_IN3, HIGH); digitalWrite(DER_IN4, LOW);
-}
-
-void moverAtras() {
-  digitalWrite(IZQ_IN1, LOW); digitalWrite(IZQ_IN2, HIGH);
-  digitalWrite(DER_IN3, LOW); digitalWrite(DER_IN4, HIGH);
-}
-
-void configurarPosicionReposo() {
-  for (int i = 0; i < NUM_SERVOS; i++) {
-    moverSuave(i, 90);
-    myservo[i].detach(); // Silenciar motores para evitar zumbido
-  }
-  digitalWrite(PIN_COMPRESOR, LOW); 
-  detenerCarro();
-  Serial.println("Sistema en Reposo.");
-}
-
-// ****************************************************
-// === 3. TUS DOS RUTINAS ORIGINALES ===
-// ****************************************************
-
-void ejecutarRutina1() {
-  Serial.println("INICIO: Rutina 1.");
-  moverAdelante(); delay(2000); detenerCarro(); delay(500);
-  
-  // Posicion Agarre
-  moverSuave(0, 45); moverSuave(1, 130); moverSuave(2, 50);  
-  moverSuave(3, 40); moverSuave(4, 140); moverSuave(5, 90); moverSuave(6, 160);
-  
-  digitalWrite(PIN_COMPRESOR, HIGH); delay(1500); // Succión ON
-  
-  // Posicion Transporte
-  moverSuave(1, 90); moverSuave(2, 90); moverSuave(3, 90); moverSuave(4, 90); moverSuave(5, 90);
-  
-  moverAtras(); delay(3000); detenerCarro();
-  
-  // Posicion Liberacion
-  moverSuave(0, 135); moverSuave(1, 130); moverSuave(2, 50); moverSuave(3, 50); moverSuave(4, 130); moverSuave(5, 90);
-  
-  digitalWrite(PIN_COMPRESOR, LOW); delay(1500); // Succión OFF
-  configurarPosicionReposo(); 
-  rutinaActiva = false;
-}
-
-void ejecutarRutina2() {
-  Serial.println("INICIO: Rutina 2.");
-  moverSuave(0, 160); moverSuave(1, 40); delay(1000);
-  moverSuave(2, 150); 
-  moverAdelante(); delay(1000); detenerCarro();
-  
-  digitalWrite(PIN_COMPRESOR, HIGH); delay(500); 
-  digitalWrite(PIN_COMPRESOR, LOW);
-  
-  configurarPosicionReposo(); 
-  rutinaActiva = false;
-}
-
-// ****************************************************
-// === 4. SETUP Y LOOP ===
-// ****************************************************
-
-void setup() {
-  Serial.begin(115200);
-  pinMode(PIN_COMPRESOR, OUTPUT);
-  digitalWrite(PIN_COMPRESOR, LOW);
-  
-  pinMode(IZQ_IN1, OUTPUT); pinMode(IZQ_IN2, OUTPUT);
-  pinMode(DER_IN3, OUTPUT); pinMode(DER_IN4, OUTPUT);
-
-  configurarPosicionReposo(); 
-  
-  while (status != WL_CONNECTED) {
-    Serial.print("Intentando conectar a: "); Serial.println(ssid);
-    status = WiFi.begin(ssid, pass);
-    delay(5000);
-  }
-  server.begin();
-  Serial.print("IP del Robot: "); Serial.println(WiFi.localIP());
-}
-
-void loop() {
-  // Manejo de rutinas
-  if (rutinaActiva) {
-    if (tipoRutina == 1) ejecutarRutina1();
-    else if (tipoRutina == 2) ejecutarRutina2();
-    rutinaActiva = false;
-    return;
-  }
-  
-  // Servidor Web
-  WiFiClient client = server.available();
-  if (client) {
-    String request = client.readStringUntil('\r');
-    client.flush();
-
-    if (request.indexOf("GET /start") != -1) {
-      tipoRutina = 1;
-      rutinaActiva = true;
-    } 
-    else if (request.indexOf("GET /rutina2") != -1) {
-      tipoRutina = 2;
-      rutinaActiva = true;
-    } 
-    else if (request.indexOf("GET /reset") != -1) {
-      rutinaActiva = false;
-      configurarPosicionReposo();
-    } 
-
-    client.println("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nOK");
-    client.stop();
-  }
-}
+            // Usamos mode: 'no-cors' para evitar bloqueos del navegador
+            fetch(url, { mode: 'no-cors' })
+                .then(() => {
+                    statusDiv.innerText = "Comando enviado con éxito";
+                    statusDiv.style.color = "#2ecc71";
+                })
+                .catch(err => {
+                    statusDiv.innerText = "Error: Verifica la conexión";
+                    statusDiv.style.color = "#e74c3c";
+                    console.error("Error de red:", err);
+                });
+        }
+    </script>
+</body>
+</html>
