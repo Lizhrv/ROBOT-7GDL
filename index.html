@@ -37,7 +37,7 @@
 
 <div class="config-bar">
     <span>GATEWAY_IP:</span>
-    <input type="text" id="ipInput" value="172.20.10.2"> </div>
+    <input type="text" id="ipInput" value="10.196.245.124"> </div>
 
 <aside class="sidebar">
     <div>
@@ -68,12 +68,10 @@
     let isBusy = false;
 
     function updateLog(msg, isErr = false) {
-        const log = document.getElementById('logText');
-        const ind = document.getElementById('status-indicator');
-        log.innerText = `> ${msg}`;
-        log.style.color = isErr ? '#ef4444' : '#94a3b8';
-        ind.style.background = isErr ? '#ef4444' : '#10b981';
-    }
+    const log = document.getElementById('logText');
+    log.innerText = `> ${msg}`;
+    log.style.color = isErr ? '#ef4444' : '#94a3b8';
+}
 
     async function sendCommand(path, okMsg) {
         if (isBusy) return;
@@ -86,11 +84,9 @@
         updateLog(`ENVIANDO_${path}...`);
 
         try {
-            // El modo no-cors es vital para peticiones directas a hardware local
-            await fetch(`http://${ip}${path}`, { 
-                mode: 'no-cors',
-                cache: 'no-cache'
-            });
+            const response = await fetch(`http://${ip}${path}`);
+const text = await response.text();
+console.log("Respuesta Arduino:", text);
             
             updateLog(`OK: ${okMsg}`);
         } catch (e) {

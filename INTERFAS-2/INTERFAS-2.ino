@@ -2,8 +2,8 @@
 #include <Servo.h>
 
 // --- CONFIGURACIÓN DE RED ---
-char ssid[] = "iPhone Liz";
-char pass[] = "lizlizliz";
+char ssid[] = "A55 de Arantxa";
+char pass[] = "hola2008";
 WiFiServer server(80);
 volatile bool rutinaActiva = false;
 
