@@ -2,8 +2,8 @@
 #include <Servo.h>
 
 // --- CONFIGURACIÓN DE RED ---
-char ssid[] = "A55 de Arantxa";
-char pass[] = "hola2008";
+char ssid[] = "iPhone Liz";
+char pass[] = "lizlizliz";
 WiFiServer server(80);
 volatile bool rutinaActiva = false;
 
@@ -84,7 +84,7 @@ void loop() {
   if (client) {
     String request = client.readStringUntil('\r');
     
-    // Respuesta para que la interfaz web funcione (CORS)
+    
     client.println("HTTP/1.1 200 OK");
     client.println("Access-Control-Allow-Origin: *");
     client.println("Content-Type: text/html");
